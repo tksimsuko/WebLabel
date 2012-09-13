@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Web Label</title>
+	<link rel="stylesheet" href="../css/popup.css" />
+	<link rel="stylesheet" href="../css/bootstrap.min.css" />
+</head>
+<body>
+<div id="container">
+	<ul class="action breadcrumb fix">
+		<li class="add-label">
+			<a href="javascript:void(0)"><i class="icon-comment"></i><br/><span>add</span></a>
+			 <!-- <span class="divider">|</span> -->
+		</li>
+		<li class="search-label">
+			<a href="javascript:void(0)"><i class="icon-search"></i><br/><span>search</span></a>
+			 <!-- <span class="divider">|</span> -->
+		</li>
+		<li class="popup">
+			<a href="javascript:void(0)"><i class="icon-share"></i><br/><span>popup</span></a>
+		</li>
+	</ul>
+	<div class="well search-form hide">
+    	<input id="searchLabelInput" placeholder="search label" type="text" class="input-large search-query">
+    </div>
+	<dl class="label-list"></dl>
+</div>
+<br/>
+<script src="../js/jquery-1.7.2.min.js"></script>
+<script src="../js/jquery-ui-1.8.21.custom.min.js"></script>
+<script src="../js/popup.js"></script>
+</body>
+</html>

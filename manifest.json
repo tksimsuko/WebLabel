@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+  "name": "WebLabel",
+  "version": "0.1",
+  "browser_action": { //全てのページに共通のアクション  ブラウザアクション
+    "default_icon": "browser/x.png", 
+    "default_title": "Web Label", 
+    "default_popup": "browser/popup.html"
+  },
+  "content_scripts": [ //全てのサイトに適用するスクリプト コンテントスクリプト
+    {
+      "matches": [ // 必須
+        "https://*/*",
+        "http://*/*"
+      ],
+      "css": [
+        "css/jquery-ui-1.8.21.custom.css",
+        "css/jquery.simple-color-picker.css",
+        "css/content.css"
+      ],
+      "js": [
+        "js/jquery-1.7.2.min.js",
+        "js/jquery-ui-1.8.21.custom.min.js",
+        "js/jquery.simple-color-picker.js",
+        "js/content.js"
+      ]
+    }
+  ],
+  "background": "background/background.html", //バックグラウンドで動作するページ
+  "permissions": [ //ブラウザを操作する権限
+      "https://*/*",
+      "http://*/*",
+      "tabs",
+      "unlimitedStorage"
+  ]
+}

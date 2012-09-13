@@ -1,0 +1,83 @@
+html body textarea.wl-text-form{
+	-webkit-box-sizing:border-box;
+	box-sizing:border-box;
+
+	width:100%;
+	height:100%;
+	resize:none;
+	outline:none;
+	overflow:hidden;
+	border:0px transparent;
+	background:transparent;
+	border-top:22px solid transparent;
+	padding:5px;
+}
+html body .wl-action{
+	position:absolute;
+	width:100%;
+	height:16px;
+	line-height:16px;
+	padding:3px 0;
+	cursor:move;
+}
+html body .wl-action a{
+	cursor:pointer;
+	font-size:12px;
+}
+html body .wl-action-menu {
+	float:left;
+	margin-left:5px;
+}
+html body .wl-action-menu ul.wl-action-list{
+	position:absolute;
+	top:0;
+	left:-115px;
+	list-style:none;
+	width:100px;
+	padding:5px;
+}
+html body .wl-menu-action{
+	float:left;
+}
+html body .wl-setting-action{
+	padding:1px 5px;
+	color:white;
+
+	-webkit-border-radius:5px;
+	border-radius:5px;
+}
+html body .wl-action-list li select{
+	display:block;
+}
+html body .wl-action-list li p{
+	margin:0;
+	padding:0;
+	font-size:12px;
+	color:black;
+}
+html body .wl-action-list li p span{
+	display:block;
+	margin-left:5px;
+	width:15px;
+	height:15px;
+	border:1px solid black;
+	cursor:pointer;
+}
+html body .wl-delete-action{
+	float:right;
+	color:white;
+	background:red;
+	width:16px;
+	line-height:16px;
+	text-align:center;
+	text-decoration:none;
+
+	-webkit-border-radius:8px;
+	border-radius:8px;
+	-ms-border-radius:8px;
+	-o-border-radius:8px;
+	-moz-border-radius:8px;
+}
+.color-picker{
+	z-index: 9999;
+}
