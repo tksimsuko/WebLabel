@@ -26,7 +26,9 @@
       ]
     }
   ],
-  "background": "background/background.html", //バックグラウンドで動作するページ
+  "background": {
+      "scripts": ["js/background.js" ]//バックグラウンドで動作するページ
+  },
   "permissions": [ //ブラウザを操作する権限
       "https://*/*",
       "http://*/*",
