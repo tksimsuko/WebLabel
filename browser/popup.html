@@ -1,34 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 	<meta charset="UTF-8"/>
 	<title>Web Label</title>
-	<link rel="stylesheet" href="../css/popup.css" />
 	<link rel="stylesheet" href="../css/bootstrap.min.css" />
+	<link rel="stylesheet" href="../css/jquery.simple-color-picker.css">
+	<link rel="stylesheet" href="../css/popup.css" />
 </head>
 <body>
 <div id="container">
-	<ul class="action breadcrumb fix">
-		<li class="add-label">
-			<a href="javascript:void(0)"><i class="icon-comment"></i><br/><span>add</span></a>
-			 <!-- <span class="divider">|</span> -->
-		</li>
-		<li class="search-label">
-			<a href="javascript:void(0)"><i class="icon-search"></i><br/><span>search</span></a>
-			 <!-- <span class="divider">|</span> -->
-		</li>
-		<li class="popup">
-			<a href="javascript:void(0)"><i class="icon-share"></i><br/><span>popup</span></a>
-		</li>
-	</ul>
-	<div class="well search-form hide">
-    	<input id="searchLabelInput" placeholder="search label" type="text" class="input-large search-query">
-    </div>
+	<div class="btn-toolbar action">
+		<div class="btn-group">
+			<button class="add-label btn">
+				<i class="icon-pencil"></i>
+			</button>
+		</div>
+		<div class="btn-group pull-right">
+			<button class="setting btn">
+				<i class="icon-cog"></i>
+			</button>
+			<button class="popup btn">
+				<i class="icon-share"></i>
+			</button>
+		</div>
+	</div>
+	<div class="settingForm well hide">
+		<h4>display labels</h4>
+		<button class="onOff on btn btn-primary"><span>off</span></button>
+		<h4>label setting</h4>
+		<div class="fix">
+			<p class="templateLabel">background color</p> 
+			<p id="backgroundColor" class="colorpicker"></p>
+		</div>
+		<div class="fix">
+			<p class="templateLabel">border-color </p>
+			<p id="borderColor" class="colorpicker"></p>
+		</div>
+		<div class="fix">
+			<p class="templateLabel">color</p>
+			<p id="color" class="colorpicker"></p>
+		</div>
+		<div class="fix">
+			<p class="templateLabel">font size</p>
+			<select id="fontSize" class="input-mini">
+				<option>12</option>
+				<option>14</option>
+				<option>16</option>
+				<option>18</option>
+				<option>20</option>
+				<option>22</option>
+				<option>24</option>
+			</select>
+		</div>
+	</div>
+	<input id="searchLabelInput" placeholder="search" type="text" class="search-query">
 	<dl class="label-list"></dl>
 </div>
 <br/>
 <script src="../js/jquery-1.7.2.min.js"></script>
+<script src="../js/bootstrap.min.js"></script>
 <script src="../js/jquery-ui-1.8.21.custom.min.js"></script>
+<script src="../js/jquery.simple-color-picker.js"></script>
 <script src="../js/popup.js"></script>
 </body>
 </html>

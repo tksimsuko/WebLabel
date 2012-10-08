@@ -1,41 +1,80 @@
 (function($){
+	//storage key
 	var LABEL_STORE_KEY = "labelStore";
+	var ON_OFF_KEY = "onOffSetting";
+	var TEMPLATE_SETTING_KEY = "templateSetting";
+	
+	//label
 	var labelListCls = "label-list";
 	var labelTermCls = "label-term";
 	var labelCountCls = "label-count";
 	var labelContentCls = "label-content";
 	var labelRightPaneCls = "label-right";
-	var urlLabelActionCls = "labels-action";
-	var contentOpenCls = "label-content-open";
-	var urlLabelDeleteCls = "labels-delete-btn";
 	var urlCls = "labels-url";
 	var actionOnCls = "action-on";
 	var openPageCls = "open-page";
 	var $labelList = $("." + labelListCls);
-	$(function(){
-		var $onOff = $(".onOff");
-		var $addLabel = $(".add-label");
-		var $searchLabel = $(".search-label");
-		var $searchForm = $(".search-form");
-		var $searchInput = $("#searchLabelInput");
-		var $popup = $(".popup");
+	//action
+	var urlLabelActionCls = "labels-action";
+	var contentOpenCls = "label-content-open";
+	var urlLabelDeleteCls = "labels-delete-btn";
+	var $setting = $(".setting");
+	var $settingForm = $(".settingForm");
+	var $onOff = $(".onOff");
+	var $addLabel = $(".add-label");
+	var $searchInput = $("#searchLabelInput");
+	var $popup = $(".popup");
+	//template
+	var bgColorId = "backgroundColor";
+	var borderColorId = "borderColor";
+	var colorId = "color";
+	var fontSizeId = "fontSize";
+	var $bgColor = $("#" + bgColorId);
+	var $borderColor = $("#" + borderColorId);
+	var $color = $("#" + colorId);
+	var $fontSize = $("#" + fontSizeId);
+	var defaultTmpSetting = {
+	    "backgroundColor": "rgb(255, 255, 0)",
+	    "borderColor": "rgb(241, 194, 50)",
+	    "color": "rgb(0, 0, 0)",
+	    "fontSize": "14"
+	};
 
+	///// 設定初期化 /////
+	(function(){
+		//on off 設定
+		var onOff = window.localStorage.getItem(ON_OFF_KEY);
+		if(!onOff) window.localStorage.setItem(ON_OFF_KEY, "on");
+		//template 設定
+		var templateSetting = window.localStorage.getItem(TEMPLATE_SETTING_KEY);
+		if(!templateSetting) window.localStorage.setItem(TEMPLATE_SETTING_KEY, JSON.stringify(defaultTmpSetting));
+	})();
+
+
+	$(function(){
 		//bind
 		//header button
+		$setting.click(function(){
+			if($settingForm.is(":hidden")){
+				$settingForm.slideDown(200);
+			}else{
+				$settingForm.slideUp(200);
+			}
+		});
 		$onOff.click(function(){
-			
+			var $this = $onOff;
+			if($this.hasClass("on")){
+				$this.removeClass("on btn-primary").addClass("btn-danger");
+				$this.find("span").text("off");
+				window.localStorage.setItem(ON_OFF_KEY, "off");
+			}else{
+				$this.addClass("on btn-primary").removeClass("btn-danger");
+				$this.find("span").text("on");
+				window.localStorage.setItem(ON_OFF_KEY, "on");
+			}
 		});
 		$addLabel.click(function(){
-			requestPopupToPage({
-				status:"create"
-			});
-		});
-		$searchLabel.click(function(){
-			if($searchForm.is(":visible")){
-				$searchForm.hide();
-			}else{
-				$searchForm.show();
-			}
+			create();
 		});
 		$popup.click(function(){
 			var width = $(window).width();
@@ -44,11 +83,11 @@
 		    var popupWindow = window.open(
 			    "/browser/popup.html",
 			    "pop",
-			    "innerWidth = " + width +
+			    "innerWidth = " + (width + 15) +
 			    ", innerHeight = " + height +
 			    ", top = " + window.screenTop +
 			    ", left = " + window.screenLeft +
-			    ", resizable = 0"
+			    ", resizable = no"
 		    );
 		    popupWindow.focus();
 		});
@@ -58,6 +97,22 @@
 		}).mouseout(function(){
 			$(this).removeClass(actionOnCls);
 		});	
+		// template selected
+		$("#backgroundColor, #borderColor, #color").simpleColorPicker({
+            onChangeColor: function(color) {
+                $(this).css("background-color", color);
+                storeTemplateSetting();
+            }
+        });
+        $("#fontSize").change(function(){
+        	storeTemplateSetting();
+        });
+
+        // init on off onOffSetting
+        initOnOffSetting();
+
+        // init template templateSetting
+        initTemplateSetting();
 
 		//render label list 
 		renderLabelList();
@@ -66,6 +121,7 @@
 		renderLabelCount();
 
 	});
+	//bind label event
 	$.event.add(window, "load", function(){
 		//open url
 		$("." + openPageCls).click(function(){
@@ -158,11 +214,36 @@
 			$cntTgt.text(cnt);
 		});
 	}
-	function sendRequestToPage(data, callback){
-		chrome.extension.getBackgroundPage().sendRequestToPage(data, callback);
+	function storeTemplateSetting(){
+		var templateSetting = {};
+        templateSetting.backgroundColor = $bgColor.css("background-color");
+        templateSetting.borderColor = $borderColor.css("background-color");
+        templateSetting.color = $color.css("background-color");
+        templateSetting.fontSize = $fontSize.val();
+
+        window.localStorage.setItem(TEMPLATE_SETTING_KEY, JSON.stringify(templateSetting));
 	}
-	function sendRequestToPageById(id, data, callback){
-		chrome.extension.getBackgroundPage().sendRequestToPageById(id, data, callback);
+	function initOnOffSetting(){
+		var onOffSetting = window.localStorage.getItem(ON_OFF_KEY);
+		if(onOffSetting === "on"){
+			$onOff.addClass("on btn-primary").removeClass("btn-danger");
+			$onOff.find("span").text("on");
+		}else{
+			$onOff.removeClass("on btn-primary").addClass("btn-danger");
+			$onOff.find("span").text("off");
+		}
+	}
+	function initTemplateSetting(){
+		var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
+		$bgColor.css("background-color", templateSetting.backgroundColor);
+		$borderColor.css("background-color", templateSetting.borderColor);
+		$color.css("background-color", templateSetting.color);
+		$fontSize.val(templateSetting.fontSize);
+	}
+
+	//background function
+	function create(){
+		chrome.extension.getBackgroundPage().create();
 	}
 	function deleteUrlLabel(url){
 		chrome.extension.getBackgroundPage().deleteUrlLabel(url);
@@ -170,7 +251,5 @@
 	function publishTo(url, data, callback){
 		chrome.extension.getBackgroundPage().publishTo(url, data, callback);
 	}
-	function requestPopupToPage(data, callback){
-		chrome.extension.getBackgroundPage().requestPopupToPage(data, callback);
-	}
+	
 })(jQuery);

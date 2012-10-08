@@ -1,12 +1,20 @@
+var ON_OFF_KEY = "onOffSetting";
 var LABEL_STORE_KEY = "labelStore";
+var TEMPLATE_SETTING_KEY = "templateSetting";
 var SELECT_WIN_ID = "selectedWindowId";
 
 //コンテンツスクリプトからリクエストを受け取る
-chrome.extension.onRequest.addListener(
+chrome.extension.onMessage.addListener(
 	function(request, sender, sendResponse) {
 		if(request){
 			switch(request.status){
 				case "read" :
+					var onOff = window.localStorage.getItem(ON_OFF_KEY);
+					if(onOff === "off"){
+						sendResponse();
+						return;
+					}
+
 					var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
 					if(!labelStore) return; 
 					var urlLabels = labelStore[request.url]
@@ -23,6 +31,7 @@ chrome.extension.onRequest.addListener(
 					sendResponse({
 						isDeleted:true
 					});
+					break;
 				default : 
 					break;
 			}
@@ -33,7 +42,7 @@ chrome.extension.onRequest.addListener(
 //コンテンツスクリプトにリクエストを送る
 function sendRequestToPage(data, callback){
 	chrome.tabs.getSelected(null, function(tab) {
-		chrome.tabs.sendRequest(tab.id, data, function(response) {
+		chrome.tabs.sendMessage(tab.id, data, function(response) {
 			if(callback) callback(response);
 		});
 	});
@@ -41,7 +50,7 @@ function sendRequestToPage(data, callback){
 //コンテンツスクリプトにリクエストを送る
 function sendRequestToPageById(id, data, callback){
 	chrome.tabs.getSelected(null, function(tab) {
-		chrome.tabs.sendRequest(id, data, function(response) {
+		chrome.tabs.sendMessage(id, data, function(response) {
 			if(callback) callback(response);
 		});
 	});
@@ -69,8 +78,18 @@ function publishTo(url, data, callback){
 }
 //request to ActiveTab
 function requestPopupToPage(data, callback){
-	var winId = parseInt(window.sessionStorage.getItem(SELECT_WIN_ID));
-	chrome.windows.get(winId, {
+	var winId = window.sessionStorage.getItem(SELECT_WIN_ID);
+	if(!winId){
+		chrome.windows.getCurrent(function(window){
+			requestPopupToSelectedWindowPage(window.id, data, callback);
+		});
+	}else{
+		winId = parseInt(winId);
+		requestPopupToSelectedWindowPage(winId, data, callback);
+	}
+}
+function requestPopupToSelectedWindowPage(windowId, data, callback){
+	chrome.windows.get(windowId, {
 		populate:true
 	}, function(win){
 		var tabs = win.tabs;
@@ -84,6 +103,7 @@ function requestPopupToPage(data, callback){
 		}
 	});
 }
+
 //window focus
 chrome.windows.onFocusChanged.addListener(function(windowId){
 	if(windowId<0) return;
@@ -92,7 +112,32 @@ chrome.windows.onFocusChanged.addListener(function(windowId){
 		window.sessionStorage.setItem(SELECT_WIN_ID, windowId);
 	});
 	
-})
+});
+
+// context menu
+chrome.contextMenus.create({
+	title: "Add Label",
+	contexts: ["all"],
+	onclick: function(info, tab){
+		createFromContextMenu();
+	}
+});
+
+// create
+function create(){
+	var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
+	requestPopupToPage({
+		status:"create",
+		templateSetting:templateSetting
+	});
+}
+function createFromContextMenu(){
+	var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
+	requestPopupToPage({
+		status:"createFromContextMenu",
+		templateSetting:templateSetting
+	});
+}
 /*
 * url : {id:label}
 */

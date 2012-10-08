@@ -3,39 +3,19 @@ body,h1,h2,h3,h4,h5,h6,div,ul,li,p,label,header,footer{
 	padding:0;
 }
 body{
-	overflow-x:hidden;
-	margin:0 20px 0 0;
 	width:280px;
+	overflow-x:hidden;
 	font-size:12px;
-	
-}
-body div .action{
-	margin-top:10px;
-}
-body div .action li{
-	margin:5px 0;
-	border:1px solid #CCC;
-	cursor:pointer;
-
-	-webkit-border-radius:5px;
-	border-radius:5px;
-}
-body div .action a{
-	outline:none;
-	text-decoration:none;
-}
-body div .action a i{
-	margin:10px 14px 0 14px;
-	width:15px;
-}
-body div .action a span{
-	display:block;
-	text-align:center;
-}
-.action-on{
-	background:#EEE;
 }
 
+/* action */
+.btn-toolbar{
+	margin:0;
+}
+.search-query{
+	margin:5px auto;
+	width:250px;
+}
 /* label */
 .label-list{
 	padding:0;
@@ -89,6 +69,27 @@ body div .action a span{
 .label-list .label-content{
 	margin:5px;
 	padding:5px;
+}
+/*setting*/
+.settingForm .onOff{
+	margin:10px 20px;
+}
+.settingForm p{
+	float:left;
+}
+.settingForm .templateLabel{
+	margin:3px 0 3px 20px;
+}
+.settingForm select{
+	margin-left:5px;
+}
+.colorpicker{
+	display:block;
+	margin:3px 5px;
+	width:15px;
+	height:15px;
+	border:1px solid black;
+	cursor:pointer;
 }
 
 /* utility */

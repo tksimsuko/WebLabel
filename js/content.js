@@ -1,16 +1,14 @@
-
+///// message /////
 //ブラウザアクションからのりクエストを受け取る
-chrome.extension.onRequest.addListener(
+chrome.extension.onMessage.addListener(
     function(request, sender, sendResponse) {
         if(request){
             switch(request.status){
                 case "create" :
-                    renderDefaultLabel({
-                        backgroundColor:"white",
-                        borderColor:"#353535",
-                        color:"#353535",
-                        fontSize:"14px"
-                    });
+                    renderDefaultLabel(request.templateSetting);
+                    break;
+                case "createFromContextMenu" : 
+                    renderLabelFromContextMenu(request);
                     break;
                 case "deleteUrlLabels" :
                     deleteAllUrlLabels();
@@ -24,15 +22,15 @@ chrome.extension.onRequest.addListener(
 
 //ブラウザアクションへりクエストを送る
 function sendRequestToPopup(data, callback){
-    chrome.extension.sendRequest(data, function(response) {
+    chrome.extension.sendMessage(data, function(response) {
         if(response){
             if(callback) callback(response);
         }
     });
 }
 
-///// ロード後 初期化 /////
-$.event.add(window, "load", function(){
+///// document ready後 初期化 /////
+$(function(){
     sendRequestToPopup({
         status:"read",
         url:location.href
@@ -138,7 +136,7 @@ function initLabel(props){
         color:props.color
     });
     $textForm.css({
-        fontSize:props.fontSize,
+        fontSize:props.fontSize + "px",
         color:props.color
     });
     $setting.css({
@@ -151,7 +149,13 @@ function initLabel(props){
     $label.draggable({
         stop:function(){
             saveLabel($label);
+            if($label.position().top < 0){
+                $label.css("top", 0);
+            }
         }
+    }).click(function(){
+        if($label.position().top < 0)
+            $label.css("top", 0);
     });
     $label.resizable({
         stop:function(){
@@ -272,6 +276,25 @@ function initLabel(props){
 
     return $label;
 }
+
+// マウスカーソルの位置を保持
+var mouse_position = {};
+$(window).bind("contextmenu", function(){
+    mouse_position.left = event.x + window.scrollX;
+    mouse_position.top = event.y + window.scrollY;
+});
+function renderLabelFromContextMenu(props){
+    initLabel({
+        top:mouse_position.top,
+        left:mouse_position.left,
+        width:"200px",
+        height:"100px",
+        backgroundColor:props.templateSetting.backgroundColor,
+        borderColor:props.templateSetting.borderColor,
+        fontSize:props.templateSetting.fontSize,
+        color:props.templateSetting.color
+    });
+}
 function renderDefaultLabel(props){
     initLabel({
         top:(window.scrollY + ($(window).height()*(1/4))),
@@ -284,6 +307,7 @@ function renderDefaultLabel(props){
         color:props.color
     });
 }
+
 
 ///// save /////
 function saveLabel(label){
@@ -311,7 +335,7 @@ function saveLabel(label){
             height:label.outerHeight(true) + "px",
             backgroundColor:label.css("background-color"),
             borderColor:label.css("border-color"),
-            fontSize:$textForm.css("font-size"),
+            fontSize:$textForm.css("font-size").replace("px", ""),
             color:$textForm.css("color"),
             content:$textForm.val()
         }

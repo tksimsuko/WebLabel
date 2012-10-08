@@ -1,27 +1,13 @@
 {
+  "manifest_version": 2,
   "name": "WebLabel",
   "version": "0.1",
-  "manifest_version": 2,
-
-  "description": "",
-   "icons": {
-    "16": "browser/x.png",
-    "48": "browser/x.png",
-    "128": "browser/x.png"
-  },
-
-  "browser_action": {
+  "browser_action": { //全てのページに共通のアクション  ブラウザアクション
     "default_icon": "browser/x.png", 
-    "default_title": "Web Label",
+    "default_title": "Web Label", 
     "default_popup": "browser/popup.html"
   },
-
-  "background": {
-      "scripts": [
-        "js/background.js"
-      ]
-  },
-  "content_scripts": [
+  "content_scripts": [ //全てのサイトに適用するスクリプト コンテントスクリプト
     {
       "matches": [ // 必須
         "https://*/*",
@@ -40,13 +26,22 @@
       ]
     }
   ],
+  "background": {
+      "scripts": [
+        "js/background.js"
+      ]//バックグラウンドで動作するページ
+  },
   "content_security_policy": "script-src 'self'; object-src 'self'",
-
-  "permissions": [
+  "permissions": [ //ブラウザを操作する権限
       "https://*/*",
       "http://*/*",
       "contextMenus",
       "tabs",
       "unlimitedStorage"
-  ]
+  ],
+   "icons": {
+    "16": "browser/x.png",
+    "48": "browser/x.png",
+    "128": "browser/x.png"
+  }
 }
