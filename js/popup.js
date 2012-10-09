@@ -41,6 +41,12 @@
 	    "fontSize": "14"
 	};
 
+	//初期化
+	chrome.windows.getCurrent(function(win){
+		if(win.type == "popup"){
+			$popup.hide();
+		}
+	});
 	///// 設定初期化 /////
 	(function(){
 		//on off 設定
@@ -90,7 +96,6 @@
 			    ", left = " + window.screenLeft +
 			    ", resizable = no"
 		    );
-		    popupWindow.focus();
 		});
 		$searchInput.keyup(function(){
 			var $this = $(this);
