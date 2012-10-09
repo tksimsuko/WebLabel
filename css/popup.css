@@ -9,12 +9,48 @@ body{
 }
 
 /* action */
+.action{
+	-webkit-box-sizing:border-box;
+	box-sizing:border-box;
+	position:fixed;
+	width:100%;
+	padding:3px;
+	z-index:9999;
+}
+.action,
+.action .btn{
+	background:#2F96B4;
+}
 .btn-toolbar{
 	margin:0;
 }
-.search-query{
-	margin:5px auto;
-	width:250px;
+#searchLabelInput{
+	margin:10px 5px;
+	width:240px;
+}
+/*setting*/
+.settingForm .onOff{
+	margin:10px 20px;
+}
+.settingForm p{
+	float:left;
+}
+.settingForm .templateLabel{
+	margin:3px 0 3px 20px;
+}
+.settingForm select{
+	margin-left:5px;
+}
+.settingForm .colorpicker{
+	display:block;
+	margin:3px 5px;
+	width:15px;
+	height:15px;
+	border:1px solid black;
+	cursor:pointer;
+}
+.settingForm .divider{
+	margin:0;
 }
 /* label */
 .label-list{
@@ -22,7 +58,7 @@ body{
 }
 .label-list .label-term{
 	position:relative;
-	padding:5px;
+	padding:10px;
 	border-top:1px #EEE solid;
 }
 .label-list .label-term a{
@@ -38,7 +74,7 @@ body{
 	float:right;
 	width:40px;
 }
-.label-list .label-term h4{
+.label-list .label-term h5{
 	word-wrap:break-word;
 	color:#353535;
 }
@@ -51,7 +87,6 @@ body{
 }
 .label-list .label-term  .labels-action{
 	clear:both;
-	padding-top:10px;
 }
 .label-list .label-term .content-open-btn{
 	display:block;
@@ -69,27 +104,6 @@ body{
 .label-list .label-content{
 	margin:5px;
 	padding:5px;
-}
-/*setting*/
-.settingForm .onOff{
-	margin:10px 20px;
-}
-.settingForm p{
-	float:left;
-}
-.settingForm .templateLabel{
-	margin:3px 0 3px 20px;
-}
-.settingForm select{
-	margin-left:5px;
-}
-.colorpicker{
-	display:block;
-	margin:3px 5px;
-	width:15px;
-	height:15px;
-	border:1px solid black;
-	cursor:pointer;
 }
 
 /* utility */

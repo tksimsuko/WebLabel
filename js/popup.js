@@ -10,6 +10,7 @@
 	var labelCountCls = "label-count";
 	var labelContentCls = "label-content";
 	var labelRightPaneCls = "label-right";
+	var titleCls = "label-title";
 	var urlCls = "labels-url";
 	var actionOnCls = "action-on";
 	var openPageCls = "open-page";
@@ -91,6 +92,34 @@
 		    );
 		    popupWindow.focus();
 		});
+		$searchInput.keyup(function(){
+			var $this = $(this);
+			var $terms = $("." + labelTermCls);
+			var $titles = $terms.find("." + titleCls);
+			var $urls = $terms.find("." + urlCls);
+
+			var val = $this.val();
+			if(!val) {
+				$terms.show();
+				return;
+			}
+
+			var words = val.split(/[ 　]/g);
+			var filteredTitle = $titles;
+			var filteredUrl = $urls;
+			for(var i=0; i<words.length; i++){
+				var word = words[i];
+				if(!word) continue;
+
+				filteredTitle = filteredTitle.filter(":contains('" + word + "')");
+				filteredUrl = filteredUrl.filter(":contains('" + word + "')");
+			}
+			
+			$terms.hide();
+			filteredTitle.parents(".label-term").show();
+			filteredUrl.parents(".label-term").show();
+		});
+
 		//hover
 		$("li", ".action").mouseover(function(){
 			$(this).addClass(actionOnCls);
@@ -178,7 +207,7 @@
 		var labels = urlLabels.labels;
 		var urlLabelsHtml = "<dt class='" + labelTermCls + " fix'>" +
 								"<a class='" + contentOpenCls + "' href='javascript:void(0)'>" +
-									"<h4>" + title + "</h4>" +
+									"<h5 class='" + titleCls + "''>" + title + "</h5>" +
 									"<p class='" + urlCls + "'>" + url + "</p>" +
 								"</a>" +
 								"<div class='" + labelRightPaneCls + "'>" +

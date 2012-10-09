@@ -1,3 +1,12 @@
+div,ul,li,p,label{
+	margin:0;
+	padding:0;
+}
+html body .wl-label{
+	margin:0;
+	padding:0;
+}
+
 html body textarea.wl-text-form{
 	-webkit-box-sizing:border-box;
 	box-sizing:border-box;
@@ -77,6 +86,9 @@ html body .wl-delete-action{
 	-ms-border-radius:8px;
 	-o-border-radius:8px;
 	-moz-border-radius:8px;
+}
+html body .wl-font-size-select{
+	width:80px;
 }
 .color-picker{
 	z-index: 9999;
