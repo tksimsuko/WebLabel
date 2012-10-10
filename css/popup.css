@@ -3,9 +3,10 @@ body,h1,h2,h3,h4,h5,h6,div,ul,li,p,label,header,footer{
 	padding:0;
 }
 body{
-	width:280px;
-	overflow-x:hidden;
 	font-size:12px;
+}
+#container{
+	width:280px;
 }
 
 /* action */
@@ -16,6 +17,7 @@ body{
 	width:100%;
 	padding:3px;
 	z-index:9999;
+	overflow-x:hidden;
 }
 .action,
 .action .btn{
@@ -29,6 +31,11 @@ body{
 	width:240px;
 }
 /*setting*/
+.settingForm{
+	position:fixed;
+	z-index:9999;
+	right:0;
+}
 .settingForm .onOff{
 	margin:10px 20px;
 }
