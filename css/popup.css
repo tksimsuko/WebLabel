@@ -32,12 +32,38 @@ body{
 }
 /*setting*/
 .settingForm{
+	width:100%;
+	background: #EEE;
 	position:fixed;
 	z-index:9999;
 	right:0;
+
+	-webkit-border-bottom-right-radius:5px;
+	border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius:5px;
+	border-bottom-left-radius: 5px;
+
+	border-right:1px solid #CCC;
+	border-bottom:1px solid #CCC;
+	border-left:1px solid #CCC;
+}
+.formWrap{
+	margin:10px 10px 0 10px;
 }
 .settingForm .onOff{
+	overflow-x:hidden;
+	width:94px;
 	margin:10px 20px;
+}
+.settingForm .onOffImg{
+	background-image: url("../img/switch.png");
+	background-repeat: no-repeat;
+	width:147px;
+	height:27px;
+	cursor:pointer;
+
+	-webkit-transition: margin-left 0.2s;
+	transition: margin-left 0.2s;
 }
 .settingForm p{
 	float:left;
@@ -56,8 +82,15 @@ body{
 	border:1px solid black;
 	cursor:pointer;
 }
-.settingForm .divider{
-	margin:0;
+.settingForm .closeForm{
+	width:100%;
+	line-height:20px;
+	text-align: center;
+	background:#DDD;
+	cursor:pointer;
+}
+.color-picker{
+	z-index:9999;
 }
 /* label */
 .label-list{
@@ -66,7 +99,7 @@ body{
 .label-list .label-term{
 	position:relative;
 	padding:10px;
-	border-top:1px #EEE solid;
+	border-top:1px #CCC solid;
 }
 .label-list .label-term a{
 	float:left;

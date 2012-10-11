@@ -11,7 +11,7 @@
 <div id="container">
 	<div class="btn-toolbar action fix">
 		<button class="add-label btn">
-			<i class="icon-pencil"></i>
+			<i class="icon-plus"></i>
 		</button>
 		<div class="btn-group pull-right">
 			<button class="setting btn">
@@ -23,37 +23,40 @@
 		</div>
 	</div>
 	<div style="height:36px;"></div>
-	<div class="settingForm well hide">
-		<h3>Settings</h3>
-		<hr class="divider"/>
-		<h5>display labels on web page</h5>
-		<button class="onOff on btn btn-primary"><span>off</span></button>
-		<hr class="divider"/>
-		<h5>label setting</h5>
-		<div class="fix">
-			<p class="templateLabel">background color</p> 
-			<p id="backgroundColor" class="colorpicker"></p>
+	<div class="settingForm hide">
+		<div class="formWrap">
+			<h5>display labels on web page</h5>
+			<!-- <button class="onOff on btn btn-primary"><span>on</span></button> -->
+			<div class="onOff on">
+				<div class="onOffImg"></div>
+			</div>
+			<h5>label setting</h5>
+			<div class="fix">
+				<p class="templateLabel">background color</p> 
+				<p id="backgroundColor" class="colorpicker"></p>
+			</div>
+			<div class="fix">
+				<p class="templateLabel">border-color </p>
+				<p id="borderColor" class="colorpicker"></p>
+			</div>
+			<div class="fix">
+				<p class="templateLabel">color</p>
+				<p id="color" class="colorpicker"></p>
+			</div>
+			<div class="fix">
+				<p class="templateLabel">font size</p>
+				<select id="fontSize" class="input-mini">
+					<option>12</option>
+					<option>14</option>
+					<option>16</option>
+					<option>18</option>
+					<option>20</option>
+					<option>22</option>
+					<option>24</option>
+				</select>
+			</div>
 		</div>
-		<div class="fix">
-			<p class="templateLabel">border-color </p>
-			<p id="borderColor" class="colorpicker"></p>
-		</div>
-		<div class="fix">
-			<p class="templateLabel">color</p>
-			<p id="color" class="colorpicker"></p>
-		</div>
-		<div class="fix">
-			<p class="templateLabel">font size</p>
-			<select id="fontSize" class="input-mini">
-				<option>12</option>
-				<option>14</option>
-				<option>16</option>
-				<option>18</option>
-				<option>20</option>
-				<option>22</option>
-				<option>24</option>
-			</select>
-		</div>
+		<div class="closeForm">▲</div>
 	</div>
 	<input id="searchLabelInput" placeholder="search" type="text" class="search-query">
 	<dl class="label-list"></dl>

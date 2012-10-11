@@ -19,9 +19,12 @@
 	var urlLabelActionCls = "labels-action";
 	var contentOpenCls = "label-content-open";
 	var urlLabelDeleteCls = "labels-delete-btn";
+	var $action = $(".action");
 	var $setting = $(".setting");
 	var $settingForm = $(".settingForm");
+	var $closeForm = $(".closeForm");
 	var $onOff = $(".onOff");
+	var $onOffImg = $(".onOffImg");
 	var $addLabel = $(".add-label");
 	var $searchInput = $("#searchLabelInput");
 	var $popup = $(".popup");
@@ -68,16 +71,19 @@
 				$settingForm.slideUp(200);
 			}
 		});
+		$closeForm.click(function(){
+			$settingForm.slideUp(200);
+		});
+
 		$onOff.click(function(){
-			var $this = $onOff;
-			if($this.hasClass("on")){
-				$this.removeClass("on btn-primary").addClass("btn-danger");
-				$this.find("span").text("off");
+			if($onOff.hasClass("on")){
 				window.localStorage.setItem(ON_OFF_KEY, "off");
+				$onOff.removeClass("on");
+				$onOffImg.css("margin-left", "-53px");
 			}else{
-				$this.addClass("on btn-primary").removeClass("btn-danger");
-				$this.find("span").text("on");
 				window.localStorage.setItem(ON_OFF_KEY, "on");
+				$onOff.addClass("on");
+				$onOffImg.css("margin-left", "0");
 			}
 		});
 		$addLabel.click(function(){
@@ -260,11 +266,11 @@
 	function initOnOffSetting(){
 		var onOffSetting = window.localStorage.getItem(ON_OFF_KEY);
 		if(onOffSetting === "on"){
-			$onOff.addClass("on btn-primary").removeClass("btn-danger");
-			$onOff.find("span").text("on");
+			$onOff.addClass("on");
+			$onOffImg.css("margin-left", "0");
 		}else{
-			$onOff.removeClass("on btn-primary").addClass("btn-danger");
-			$onOff.find("span").text("off");
+			$onOff.removeClass("on");
+			$onOffImg.css("margin-left", "-53px");
 		}
 	}
 	function initTemplateSetting(){
