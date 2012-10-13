@@ -224,6 +224,9 @@
 			var urlLabels = labelStore[url];
 			renderUrlLabels(urlLabels);
 		}
+		if(!labelStore || isEmptyObject(labelStore)){
+			$labelList.append("<h3>no data</h3>");
+		}
 	}
 	function renderUrlLabels(urlLabels){
 		var url = urlLabels.url;
@@ -312,4 +315,9 @@
 		chrome.extension.getBackgroundPage().publishTo(url, data, callback);
 	}
 	
+	//util
+	function isEmptyObject(obj){
+		for(i in obj) return false;
+		return true;
+	}
 })(jQuery);

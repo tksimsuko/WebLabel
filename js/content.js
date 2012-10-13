@@ -62,6 +62,7 @@ var actionCls = "wl-action";
 var actionMenuCls = "wl-action-menu";
 var actionMessageCls = "wl-action-message";
 var settingActionCls = "wl-setting-action";
+var saveCls = "wl-save-action"
 var actionListCls = "wl-action-list";
 var bgColorActionCls = "wl-bgColor-action";
 var bgColorId = "wl_bgColor";
@@ -78,7 +79,8 @@ function initLabel(props){
     var labelHtml = "<div class='" + labelCls + "'>" +
                         "<div class='" + actionCls + "'>" +
                             "<div class='" + actionMenuCls + "'>" +
-                                "<a class='" + settingActionCls + "' href='javascript:void(0)'>edit</a>" +
+                                "<a class='" + settingActionCls + "' href='javascript:void(0)'>setting</a>" +
+                                "<a class='" + saveCls + "' href='javascript:void(0)'>save</a>" +
                                 "<ul class='" + actionListCls + "'>" +
                                     "<li><p class='" + bgColorActionCls + "' >bacground color<span id='" + bgColorId + "' ></span></p></li>" +
                                     "<li><p class='" + borderColorActionCls + "' >border color<span id='" + borderColorId + "' ></p></span></li>" +
@@ -125,7 +127,8 @@ function initLabel(props){
     var $action = $("." + actionCls, $label);
     var $setting = $("." + settingActionCls, $label);
     var $delete = $("." + deleteActionCls, $label);
-    var $actions = $("." + settingActionCls + ",." + deleteActionCls, $label);
+    var $save = $("." + saveCls, $label);
+    var $actions = $("." + settingActionCls + ",." + deleteActionCls + ",." + saveCls, $label);
     var $actionList = $("." + actionListCls, $label);
     var $bgClrAct = $("." + bgColorActionCls, $label);
     var $borderClrAct = $("." + borderColorActionCls, $label);
@@ -145,6 +148,10 @@ function initLabel(props){
         backgroundColor:props.backgroundColor,
         color:props.color
     });
+    $save.css({
+        backgroundColor:props.backgroundColor,
+        color:props.color
+    });
 
     /////  bind /////
     //resize draggable
@@ -153,15 +160,15 @@ function initLabel(props){
             if($label.position().top < 0){
                 $label.css("top", 0);
             }
+            saveLabel($label);
+        }
+    }).resizable({
+        stop:function(){
+            saveLabel($label);
         }
     }).click(function(){
         if($label.position().top < 0)
             $label.css("top", 0);
-    });
-    $label.resizable({
-        stop:function(){
-            saveLabel($label);
-        }
     });
 
     //resize control
@@ -176,7 +183,7 @@ function initLabel(props){
     bindClickAction();
 
     //save
-    $action.click(function(){
+    $save.click(function(){
         saveLabel($label);
     });
 
@@ -195,6 +202,7 @@ function initLabel(props){
                 alert("network error. It cannot deleted.");
             }
         });
+        return false;
     });
 
     //textarea event
@@ -222,10 +230,12 @@ function initLabel(props){
         $label.mouseover(function(){
             $setting.show();
             $delete.show();
+            $save.show();
             $resizeControl.show();
         }).mouseout(function(){
             $setting.hide();
             $delete.hide();
+            $save.hide();
             $resizeControl.hide();
         });
     }
@@ -252,6 +262,7 @@ function initLabel(props){
             onChangeColor: function(color) {
                 $label.css("background-color", color);
                 $setting.css("background-color", color);
+                $save.css("background-color", color);
                 $(this).css("background-color", color);
                 saveLabel($label);
             }
@@ -269,6 +280,7 @@ function initLabel(props){
             onChangeColor: function(color) {
                 $("textarea", $label).css("color", color);
                 $setting.css("color", color);
+                $save.css("color", color);
                 var clr = $textForm.css("color");
                 $(this).css("background-color", clr);
                 saveLabel($label);
