@@ -9,7 +9,7 @@
 	var labelTermCls = "label-term";
 	var labelCountCls = "label-count";
 	var labelContentCls = "label-content";
-	var labelRightPaneCls = "label-right";
+	var termContentCls = "label-term-content";
 	var titleCls = "label-title";
 	var urlCls = "labels-url";
 	var actionOnCls = "action-on";
@@ -27,6 +27,7 @@
 	var $onOffImg = $(".onOffImg");
 	var $addLabel = $(".add-label");
 	var $searchInput = $("#searchLabelInput");
+	var $searchRemove = $(".searchTextRemove");
 	var $popup = $(".popup");
 	//template
 	var bgColorId = "backgroundColor";
@@ -49,7 +50,12 @@
 		if(win.type == "popup"){
 			$popup.hide();
 		}
+		$("body").width($(window).width());
+		$(window).resize(function(){
+			$("body").width($(this).width());
+		});
 	});
+
 	///// 設定初期化 /////
 	(function(){
 		//on off 設定
@@ -60,7 +66,7 @@
 		if(!templateSetting) window.localStorage.setItem(TEMPLATE_SETTING_KEY, JSON.stringify(defaultTmpSetting));
 	})();
 
-
+	///// 初期化 /////
 	$(function(){
 		//bind
 		//header button
@@ -130,13 +136,11 @@
 			filteredTitle.parents(".label-term").show();
 			filteredUrl.parents(".label-term").show();
 		});
+		$searchRemove.click(function(){
+			$searchInput.val("").keyup();
+		});
 
 		//hover
-		$("li", ".action").mouseover(function(){
-			$(this).addClass(actionOnCls);
-		}).mouseout(function(){
-			$(this).removeClass(actionOnCls);
-		});	
 		// template selected
 		$("#backgroundColor, #borderColor, #color").simpleColorPicker({
             onChangeColor: function(color) {
@@ -159,7 +163,6 @@
 
 		//render count
 		renderLabelCount();
-
 	});
 	//bind label event
 	$.event.add(window, "load", function(){
@@ -182,7 +185,12 @@
 			$term.remove();
 			$content.remove();
 		});
-		//open this page button hover
+		//term action button
+		$("." + contentOpenCls).mouseover(function(){
+			$(this).addClass("btn-primary");
+		}).mouseout(function(){
+			$(this).removeClass("btn-primary");
+		});
 		$("." + openPageCls).mouseover(function(){
 			$(this).addClass("btn-primary");
 		}).mouseout(function(){
@@ -196,11 +204,16 @@
 
 		//content open
 		$("." + contentOpenCls).click(function(){
-			var $content = $(this).parent("dt").next("dd");
+			var $btn = $(this);
+			var $content = $btn.parents("dt").next("dd");
 			if($content.is(":visible")){
-				$content.slideUp("fast");
+				$content.slideUp("fast", function(){
+					$btn.text("show details");
+				});
 			}else{
-				$content.slideDown("fast");
+				$content.slideDown("fast", function(){
+					$btn.text("hide details");
+				});
 			}
 		});
 	});
@@ -217,17 +230,16 @@
 		var title = urlLabels.title;
 		var labels = urlLabels.labels;
 		var urlLabelsHtml = "<dt class='" + labelTermCls + " fix'>" +
-								"<a class='" + contentOpenCls + "' href='javascript:void(0)'>" +
+								"<div class='" + termContentCls + "'>" +
 									"<h5 class='" + titleCls + "''>" + title + "</h5>" +
 									"<p class='" + urlCls + "'>" + url + "</p>" +
-								"</a>" +
-								"<div class='" + labelRightPaneCls + "'>" +
-									"<span class='badge " + labelCountCls + "'></span>" +
 								"</div>" +
 								"<div class='" + urlLabelActionCls + "'>" +
-									"<button class='" + openPageCls + " btn btn-mini'>open this page</button>" +
+									"<button class='" + contentOpenCls + " btn btn-mini'>show details</button>" +
+									"<button class='" + openPageCls + " btn btn-mini'" + ">open this page</button>" + 
 									"<button class='" + urlLabelDeleteCls + " btn btn-mini'>delete</button>" +
 								"</div>" +
+								"<span class='badge " + labelCountCls + "'></span>" +
 							"</dt>" +
 							"<dd class='hide'>" +
 								createLabelHtml(labels) +
@@ -238,10 +250,18 @@
 	function createLabelHtml(labelList){
 		var labelsHtml = "";
 		for(id in labelList){
-			var label = labelList[id];
+			var label = labelList[id];		
 			labelsHtml = labelsHtml + 
-							"<div class='" + labelContentCls + "'>" +
-								"<p>" + label.content + "</p>" +
+							"<div " + 
+							"class='" + labelContentCls + "' " + 
+							"style='" +
+								"background-color:" + label.backgroundColor+ ";" +  
+								"border:3px solid " + label.borderColor + ";" + 
+								"color:" + label.color + ";" + 
+								"font-size:" + label.fontSize + ";" + 
+							"'" +  
+							">" +
+								"<p>" + (label.content?label.content:" ") + "</p>" +
 							"</div>"
 							;
 		}

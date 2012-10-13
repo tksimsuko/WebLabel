@@ -4,9 +4,8 @@ body,h1,h2,h3,h4,h5,h6,div,ul,li,p,label,header,footer{
 }
 body{
 	font-size:12px;
-}
-#container{
-	width:280px;
+	height:600px;
+	width:300px;
 }
 
 /* action */
@@ -21,19 +20,15 @@ body{
 }
 .action,
 .action .btn{
-	background:#2F96B4;
+	background:gold;
 }
 .btn-toolbar{
 	margin:0;
 }
-#searchLabelInput{
-	margin:10px 5px;
-	width:240px;
-}
 /*setting*/
 .settingForm{
 	width:100%;
-	background: #EEE;
+	background:rgb(255, 230, 95);
 	position:fixed;
 	z-index:9999;
 	right:0;
@@ -86,14 +81,35 @@ body{
 	width:100%;
 	line-height:20px;
 	text-align: center;
-	background:#DDD;
+	background:gold;
 	cursor:pointer;
 }
 .color-picker{
 	z-index:9999;
 }
+/*search form*/
+.searchForm{
+	-webkit-box-sizing:border-box;
+	box-sizing:border-box;
+	padding:10px 5px;
+}
+.searchInputWrap{
+	position:relative;
+	float:left;
+}
+.searchForm #searchLabelInput{
+	min-width:260px;
+}
+.searchForm .searchTextRemove{
+	position:absolute;
+	top:8px;
+	right:10px;
+	cursor:pointer;
+}
+
 /* label */
 .label-list{
+	margin:0;
 	padding:0;
 }
 .label-list .label-term{
@@ -101,18 +117,16 @@ body{
 	padding:10px;
 	border-top:1px #CCC solid;
 }
-.label-list .label-term a{
-	float:left;
-	width:200px;
-	text-decoration:none;
-	outline:none;
-}
 .label-list .label-term:hover{
 	background:#EEE;
 }
-.label-list .label-term .label-right{
-	float:right;
-	width:40px;
+.label-list .label-term .label-count{
+	position:absolute;
+	top:10px;
+	right:10px;
+}
+.label-list .label-term .label-term-content{
+	padding-right:40px;
 }
 .label-list .label-term h5{
 	word-wrap:break-word;
@@ -123,20 +137,13 @@ body{
 	padding:0;
 	word-wrap:break-word;
 	font-size:12px;
-	color:#08C;
+	color:rgba(0, 0, 0, 0.5);
 }
 .label-list .label-term  .labels-action{
 	clear:both;
 }
-.label-list .label-term .content-open-btn{
-	display:block;
-	text-align:center;
-	line-height:24px;
-	font-size:24px;
-	cursor:pointer;
-}
-.label-list .label-term .content-open-btn:hover{
-	color:#AAA;
+.label-list .label-term .open-page{
+	margin-left: 10px;
 }
 .label-list .label-term .labels-delete-btn{
 	float:right;
@@ -144,6 +151,9 @@ body{
 .label-list .label-content{
 	margin:5px;
 	padding:5px;
+}
+.label-list .label-content p{
+	white-space: pre-wrap;
 }
 
 /* utility */

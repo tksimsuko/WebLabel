@@ -90,6 +90,11 @@ html body .wl-delete-action{
 html body .wl-font-size-select{
 	width:80px;
 }
+html body .wl-action-message{
+	float:right;
+	padding-right:10px;
+	opacity:0.4;
+}
 .color-picker{
 	z-index: 9999;
 }

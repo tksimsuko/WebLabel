@@ -60,6 +60,7 @@ $(function(){
 var labelCls = "wl-label";
 var actionCls = "wl-action";
 var actionMenuCls = "wl-action-menu";
+var actionMessageCls = "wl-action-message";
 var settingActionCls = "wl-setting-action";
 var actionListCls = "wl-action-list";
 var bgColorActionCls = "wl-bgColor-action";
@@ -97,6 +98,7 @@ function initLabel(props){
                                 "</ul>" +
                             "</div>" +
                             "<a class='" + deleteActionCls + " href='javascript:void(0)'>&times;</a>" +
+                            "<span class='" + actionMessageCls + "'></span>" + 
                         "</div>" +
                         "<textarea class='" + textFormCls + "'></textarea>" +
                     "</div>"
@@ -148,7 +150,6 @@ function initLabel(props){
     //resize draggable
     $label.draggable({
         stop:function(){
-            saveLabel($label);
             if($label.position().top < 0){
                 $label.css("top", 0);
             }
@@ -173,6 +174,11 @@ function initLabel(props){
     //hover event bind
     bindHoverAction();
     bindClickAction();
+
+    //save
+    $action.click(function(){
+        saveLabel($label);
+    });
 
     //delete
     $delete.click(function(){
@@ -240,6 +246,7 @@ function initLabel(props){
             }else{
                 $actionList.hide(); 
             }
+            return false;
         });
         $("span", $bgClrAct).simpleColorPicker({
             onChangeColor: function(color) {
@@ -321,6 +328,10 @@ function saveLabel(label){
     //text form
     var $textForm = $("." + textFormCls, label);
 
+    //message
+    var $message = $("." + actionMessageCls, label);
+    $message.text("saving…");
+
     //insert
     //update
     sendRequestToPopup({
@@ -341,9 +352,12 @@ function saveLabel(label){
         }
     }, function(response){
         if(response && response.isSaved){
-            
+            $message.text("saved");
+            setTimeout(function(){
+                $message.text("");
+            }, 2000);
         }else{
-            alert("network error. It cannot saved.");
+            $message.text("network error. It cannot saved.");
         }
     });
 }
