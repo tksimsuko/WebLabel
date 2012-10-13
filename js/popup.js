@@ -9,6 +9,7 @@
 	var labelTermCls = "label-term";
 	var labelCountCls = "label-count";
 	var labelContentCls = "label-content";
+	var labelTextCls = "label-content-text";
 	var termContentCls = "label-term-content";
 	var titleCls = "label-title";
 	var urlCls = "labels-url";
@@ -112,29 +113,40 @@
 		$searchInput.keyup(function(){
 			var $this = $(this);
 			var $terms = $("." + labelTermCls);
+			var $labelContents = $("." + labelContentCls);
 			var $titles = $terms.find("." + titleCls);
 			var $urls = $terms.find("." + urlCls);
+			var $labels = $("." + labelTextCls);
 
 			var val = $this.val();
 			if(!val) {
-				$terms.show();
+				$terms.show().next("dd").hide().find("." + labelContentCls).show();
+				$("." + contentOpenCls).show().text("show details");;
 				return;
 			}
 
 			var words = val.split(/[ 　]/g);
 			var filteredTitle = $titles;
 			var filteredUrl = $urls;
+			var filteredLabels = $labels;
 			for(var i=0; i<words.length; i++){
 				var word = words[i];
 				if(!word) continue;
 
 				filteredTitle = filteredTitle.filter(":contains('" + word + "')");
 				filteredUrl = filteredUrl.filter(":contains('" + word + "')");
+				filteredLabels = filteredLabels.filter(":contains('" + word + "')");
 			}
 			
 			$terms.hide();
-			filteredTitle.parents(".label-term").show();
-			filteredUrl.parents(".label-term").show();
+			filteredTitle.parents("." + labelTermCls).show().find("." + contentOpenCls).hide();
+			filteredUrl.parents("." + labelTermCls).show().find("." + contentOpenCls).hide();
+
+			$labelContents.hide();
+			filteredLabels.parents("dd").show();
+
+			filteredLabels.parents("." + labelContentCls).show();
+			filteredLabels.parents("dd").prev("dt").show().find("." + contentOpenCls).hide();
 		});
 		$searchRemove.click(function(){
 			$searchInput.val("").keyup();
@@ -244,7 +256,7 @@
 								"</div>" +
 								"<span class='badge " + labelCountCls + "'></span>" +
 							"</dt>" +
-							"<dd class='hide'>" +
+							"<dd style='display:none;'>" +
 								createLabelHtml(labels) +
 							"</dd>"
 							;
@@ -264,7 +276,7 @@
 								"font-size:" + label.fontSize + ";" + 
 							"'" +  
 							">" +
-								"<p>" + (label.content?label.content:" ") + "</p>" +
+								"<p class='" + labelTextCls + "'>" + (label.content?label.content:" ") + "</p>" +
 							"</div>"
 							;
 		}

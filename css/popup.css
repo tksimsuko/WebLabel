@@ -142,8 +142,8 @@ body{
 .label-list .label-term  .labels-action{
 	clear:both;
 }
-.label-list .label-term .open-page{
-	margin-left: 10px;
+.label-list .label-term .label-content-open{
+	margin-right: 10px;
 }
 .label-list .label-term .labels-delete-btn{
 	float:right;
@@ -154,6 +154,7 @@ body{
 }
 .label-list .label-content p{
 	white-space: pre-wrap;
+	word-wrap:break-word;
 }
 
 .noData{
