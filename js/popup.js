@@ -225,7 +225,7 @@
 			renderUrlLabels(urlLabels);
 		}
 		if(!labelStore || isEmptyObject(labelStore)){
-			$labelList.append("<h3>no data</h3>");
+			$labelList.append("<h3 class='noData'>no data</h3>");
 		}
 	}
 	function renderUrlLabels(urlLabels){

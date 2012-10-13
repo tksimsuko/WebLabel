@@ -156,6 +156,12 @@ body{
 	white-space: pre-wrap;
 }
 
+.noData{
+	text-align:center;
+	opacity:0.5;
+	line-height:400px;
+}
+
 /* utility */
 .fix:after{
 	content:"";
