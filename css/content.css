@@ -96,6 +96,7 @@ html body .wl-delete-action{
 	-moz-border-radius:8px;
 
 	font-size:12px;
+	cursor:pointer;
 }
 html body .wl-font-size-select{
 	width:80px;
