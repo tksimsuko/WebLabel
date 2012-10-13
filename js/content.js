@@ -79,7 +79,7 @@ function initLabel(props){
     var labelHtml = "<div class='" + labelCls + "'>" +
                         "<div class='" + actionCls + "'>" +
                             "<div class='" + actionMenuCls + "'>" +
-                                "<a class='" + settingActionCls + "' href='javascript:void(0)'>setting</a>" +
+                                "<a class='" + settingActionCls + "' href='javascript:void(0)'>▼</a>" +
                                 "<a class='" + saveCls + "' href='javascript:void(0)'>save</a>" +
                                 "<ul class='" + actionListCls + "'>" +
                                     "<li><p class='" + bgColorActionCls + "' >bacground color<span id='" + bgColorId + "' ></span></p></li>" +
