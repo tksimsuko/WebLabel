@@ -243,7 +243,7 @@ function initLabel(props){
         //setting
         $setting.click(function(){
             if($actionList.is(":hidden")){
-                $actionList.slideDown();
+                $actionList.show();
 
                 var bgClr = $label.css("background-color");
                 $("span", $bgClrAct).css("background-color", bgClr);

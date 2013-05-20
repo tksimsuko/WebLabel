@@ -22,6 +22,9 @@ body{
 .action .btn{
 	background:gold;
 }
+.action .add-label{
+	float: left;
+}
 .btn-toolbar{
 	margin:0;
 }
@@ -84,7 +87,7 @@ body{
 	background:gold;
 	cursor:pointer;
 }
-.color-picker{
+.wl-color-picker{
 	z-index:9999;
 }
 /*search form*/

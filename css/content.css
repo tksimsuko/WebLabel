@@ -1,12 +1,15 @@
-div,ul,li,p,label{
-	margin:0;
-	padding:0;
-}
 html body .wl-label{
 	margin:0;
 	padding:0;
 }
-
+.wl-label div,
+.wl-label ul,
+.wl-label li,
+.wl-label p,
+.wl-label label{
+	margin:0;
+	padding:0;
+}
 html body textarea.wl-text-form{
 	-webkit-box-sizing:border-box;
 	box-sizing:border-box;
@@ -37,15 +40,6 @@ html body .wl-action-menu {
 	float:left;
 	margin-left:5px;
 }
-html body .wl-action-menu ul.wl-action-list{
-	position:absolute;
-	top:0;
-	left:-115px;
-	list-style:none;
-	width:100px;
-	padding:5px;
-	margin:0;
-}
 html body .wl-menu-action{
 	float:left;
 	padding:0;
@@ -63,6 +57,21 @@ html body .wl-save-action{
 
 	cursor:pointer;
 }
+html body .wl-action-menu .wl-action-list{
+	position:absolute;
+	top:0;
+	left:-127px;
+	list-style:none;
+	width:120px;
+	padding: 0px;
+	margin:0;
+	background: #EEE;
+	border: 1px solid #999;
+}
+html body .wl-action-list li{
+	margin: 0px;
+	padding: 5px;
+}
 html body .wl-action-list li select{
 	display:block;
 }
@@ -70,6 +79,8 @@ html body .wl-action-list li p{
 	margin:0;
 	padding:0;
 	font-size:12px;
+	line-height: 20px;
+	font-weight: bold;
 	color:black;
 }
 html body .wl-action-list li p span{
@@ -107,6 +118,6 @@ html body .wl-action-message{
 	font-size:12px;
 	opacity:0.4;
 }
-.color-picker{
+.wl-color-picker{
 	z-index: 9999;
 }
