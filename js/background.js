@@ -1,40 +1,80 @@
+//storage
+var storage = window.localStorage;
 var ON_OFF_KEY = "onOffSetting";
 var LABEL_STORE_KEY = "labelStore";
 var TEMPLATE_SETTING_KEY = "templateSetting";
+var COMMAND_SETTING_KEY = "commandSetting";
 var SELECT_WIN_ID = "selectedWindowId";
+
+// initialize after install
+chrome.runtime.onInstalled.addListener(function(){
+	//on off 設定
+	if(!storage.getItem(ON_OFF_KEY)){
+		storage.setItem(ON_OFF_KEY, "on");
+	}
+
+	//template 設定
+	if(!storage.getItem(TEMPLATE_SETTING_KEY)){
+		storage.setItem(TEMPLATE_SETTING_KEY, JSON.stringify({
+			width: "200px",
+			height: "100px",
+			backgroundColor: "#ffff00",
+			borderColor: "#f1c232",
+			color: "#000",
+			fontSize: "14"
+		}));
+	}
+
+	//command 設定
+	if(!storage.getItem(COMMAND_SETTING_KEY)){
+		storage.setItem(COMMAND_SETTING_KEY, JSON.stringify({
+			create: "",
+			save: ""
+		}));
+	}
+});
 
 //コンテンツスクリプトからリクエストを受け取る
 chrome.extension.onMessage.addListener(
 	function(request, sender, sendResponse) {
-		if(request){
-			switch(request.status){
-				case "read" :
-					var onOff = window.localStorage.getItem(ON_OFF_KEY);
-					if(onOff === "off"){
-						sendResponse();
-						return;
-					}
+		if(!request){
+			sendResponse();
+			return;
+		}
 
-					var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
-					if(!labelStore) return; 
-					var urlLabels = labelStore[request.url]
-					if(urlLabels) sendResponse(urlLabels);
-					break;
-				case "save" :
-					save(request);
-					sendResponse({
-						isSaved:true
-					});
-					break;
-				case "delete" :
-					deleteLabel(request.url, request.id);
-					sendResponse({
-						isDeleted:true
-					});
-					break;
-				default : 
-					break;
-			}
+		switch(request.status){
+			case "read" :
+				var onOff = window.localStorage.getItem(ON_OFF_KEY);
+				if(onOff === "off"){
+					sendResponse();
+					return;
+				}
+
+				var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
+				if(!labelStore) return; 
+				var urlLabels = labelStore[request.url]
+				if(urlLabels) sendResponse(urlLabels);
+				break;
+			case "save" :
+				save(request);
+				sendResponse({
+					isSaved:true
+				});
+				break;
+			case "delete" :
+				deleteLabel(request.url, request.id);
+				sendResponse();
+				break;
+			case "getCmd" :
+				var cmds = JSON.parse(storage.getItem(COMMAND_SETTING_KEY));
+				var template = JSON.parse(storage.getItem(TEMPLATE_SETTING_KEY));
+				sendResponse({
+					cmds: cmds,
+					template: template
+				});
+				break;
+			default : 
+				break;
 		}
 	}
 );
@@ -49,10 +89,8 @@ function sendRequestToPage(data, callback){
 }
 //コンテンツスクリプトにリクエストを送る
 function sendRequestToPageById(id, data, callback){
-	chrome.tabs.getSelected(null, function(tab) {
-		chrome.tabs.sendMessage(id, data, function(response) {
-			if(callback) callback(response);
-		});
+	chrome.tabs.sendMessage(id, data, function(response) {
+		if(callback) callback(response, chrome.extension.lastError);
 	});
 }
 
@@ -124,12 +162,12 @@ chrome.contextMenus.create({
 });
 
 // create
-function create(){
+function create(callback){
 	var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
 	requestPopupToPage({
 		status:"create",
 		templateSetting:templateSetting
-	});
+	}, callback);
 }
 function createFromContextMenu(){
 	var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
@@ -161,7 +199,6 @@ function save(request){
 		lbls[id] = label;
 		urlLabels.labels = lbls;
 		labelStore[url] = urlLabels;
-
 		window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 		return;
 	}
@@ -169,7 +206,8 @@ function save(request){
 	
 	if(url in labelStore){
 		//update urlLabels
-		var lbls = labelStore[url].labels;
+		var urlLabels = labelStore[url];
+		var lbls = urlLabels.labels;
 		lbls[id] = label;
 		labelStore[url].labels = lbls;
 	}else{
@@ -198,6 +236,8 @@ function deleteUrlLabel(url){
 function deleteLabel(url, id){
 	var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
 	var urlLabels = labelStore[url];
+
+	//update dataStore
 	if(urlLabels.labels){
 		var labels = urlLabels.labels;
 		for(labelId in labels){
@@ -214,11 +254,12 @@ function deleteLabel(url, id){
 					labelStore[url].labels = labels;
 					window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 				}
-				return;
 			}
 		}
 	}
 }
+
+//util
 function isEmptyObject(obj){
 	for(i in obj) return false;
 	return true;

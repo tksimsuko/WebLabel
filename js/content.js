@@ -20,8 +20,8 @@ chrome.extension.onMessage.addListener(
     }
 );
 
-//ブラウザアクションへりクエストを送る
-function sendRequestToPopup(data, callback){
+//バックグラウンドへりクエストを送る
+function sendRequest(data, callback){
     chrome.extension.sendMessage(data, function(response) {
         if(response){
             if(callback) callback(response);
@@ -30,8 +30,8 @@ function sendRequestToPopup(data, callback){
 }
 
 ///// document ready後 初期化 /////
-$(function(){
-    sendRequestToPopup({
+(function(){
+    sendRequest({
         status:"read",
         url:location.href
     }, function(response){
@@ -40,6 +40,7 @@ $(function(){
         for(labelId in labels){
             var label = labels[labelId];
             var $label = initLabel({
+                id: labelId,
                 top:label.top,
                 left:label.left,
                 width:label.width,
@@ -50,247 +51,419 @@ $(function(){
                 color:label.color,
                 content:label.content
             });
-
-            $.data($label.get(0), "id", labelId);
         }
     });
-});
+    sendRequest({
+        status: "getCmd"
+    }, function(data){
+        if(!data || !data.cmds){
+            return;
+        }
+
+        bindKeyControl(data);
+    });
+})();
 
 ///// Label作成 /////
 var labelCls = "wl-label";
+var labelIdCls = "wl-label-id";
 var actionCls = "wl-action";
 var actionMenuCls = "wl-action-menu";
 var actionMessageCls = "wl-action-message";
 var settingActionCls = "wl-setting-action";
-var saveCls = "wl-save-action"
 var actionListCls = "wl-action-list";
-var bgColorActionCls = "wl-bgColor-action";
-var bgColorId = "wl_bgColor";
-var borderColorActionCls = "wl-borderColor-action";
-var borderColorId = "wl_borderColor";
-var colorCls = "wl-color-action";
-var colorId = "wl_color";
-var fontSizeCls = "wl-font-size-action";
-var fontSizeSelectCls = "wl-font-size-select";
+var bgColorId = "wl-bgColor";
+var borderColorId = "wl-borderColor";
+var colorId = "wl-color";
+var fontSizeInputCls = "wl-font-size-input";
 var deleteActionCls = "wl-delete-action"
 var textFormCls = "wl-text-form";
 function initLabel(props){
-    //html
-    var labelHtml = "<div class='" + labelCls + "'>" +
-                        "<div class='" + actionCls + "'>" +
-                            "<div class='" + actionMenuCls + "'>" +
-                                "<a class='" + settingActionCls + "' href='javascript:void(0)'>▼</a>" +
-                                "<a class='" + saveCls + "' href='javascript:void(0)'>save</a>" +
-                                "<ul class='" + actionListCls + "'>" +
-                                    "<li><p class='" + bgColorActionCls + "' >bacground color<span id='" + bgColorId + "' ></span></p></li>" +
-                                    "<li><p class='" + borderColorActionCls + "' >border color<span id='" + borderColorId + "' ></p></span></li>" +
-                                    "<li><p class='" + colorCls + "' >color<span id='" + colorId + "'></span></p></li>" +
-                                    "<li>" +
-                                        "<p class='" + fontSizeCls + "' >font size</p>" +
-                                        " <select class='" + fontSizeSelectCls + "''>" + 
-                                            "<option>12</option>" + 
-                                            "<option>14</option>" + 
-                                            "<option>16</option>" + 
-                                            "<option>18</option>" + 
-                                            "<option>20</option>" + 
-                                            "<option>22</option>" + 
-                                            "<option>24</option>" + 
-                                        "</select>" +
-                                    "</li>" +
-                                "</ul>" +
-                            "</div>" +
-                            "<a class='" + deleteActionCls + " href='javascript:void(0)'>&times;</a>" +
-                            "<span class='" + actionMessageCls + "'></span>" + 
-                        "</div>" +
-                        "<textarea class='" + textFormCls + "'></textarea>" +
-                    "</div>"
-                    ;
-    var $label = $(labelHtml);
-    //style
-    $label.css({
-        position:"absolute",
-        zIndex:9999,
-        top:props.top,
-        left:props.left,
-        width:props.width,
-        height:props.height,
-        borderRight:"5px solid",
-        borderBottom:"5px solid",
-        borderLeft:"5px solid",
-        borderColor:props.borderColor,
-        backgroundColor:props.backgroundColor
-    });
+    //generate
+    var $label = generateLabelElement(props);
+    document.body.appendChild($label);
 
-    //append
-    $("body").append($label);
-    var $textForm = $("." + textFormCls, $label);
-    var $action = $("." + actionCls, $label);
-    var $setting = $("." + settingActionCls, $label);
-    var $delete = $("." + deleteActionCls, $label);
-    var $save = $("." + saveCls, $label);
-    var $actions = $("." + settingActionCls + ",." + deleteActionCls + ",." + saveCls, $label);
-    var $actionList = $("." + actionListCls, $label);
-    var $bgClrAct = $("." + bgColorActionCls, $label);
-    var $borderClrAct = $("." + borderColorActionCls, $label);
-    var $clrAct = $("." + colorCls, $label);
-    var $fontSize = $("." + fontSizeCls, $label).next("select");
+    ///// dom cache /////
+    var $labelId = $label.querySelector("." + labelIdCls);
+    var $textForm = $label.querySelector("." + textFormCls);
+    var $action = $label.querySelector("." + actionCls);
+    var $setting = $label.querySelector("." + settingActionCls);
+    var $delete = $label.querySelector("." + deleteActionCls);
+    //setting
+    var $actionList = $label.querySelector("." + actionListCls);
+    var $bgColorInput = $label.querySelector("." + bgColorId);
+    var $borderColorInput = $label.querySelector("." + borderColorId);
+    var $colorInput = $label.querySelector("." + colorId);
+    var $fontSizeInput = $label.querySelector("." + fontSizeInputCls);
 
-    //style
-    $action.css({
-        backgroundColor:props.borderColor,
-        color:props.color
-    });
-    $textForm.css({
-        fontSize:props.fontSize + "px",
-        color:props.color
-    });
-    $setting.css({
-        backgroundColor:props.backgroundColor,
-        color:props.color
-    });
-    $save.css({
-        backgroundColor:props.backgroundColor,
-        color:props.color
-    });
+    //value
+    var labelId = props.id || generateId();
+    $labelId.textContent = labelId;
+    if(props.content){
+        $textForm.value = props.content;
+    }
+    $bgColorInput.value = getColor(props.backgroundColor);
+    $borderColorInput.value = getColor(props.borderColor);
+    $colorInput.value = getColor(props.color);
+    $fontSizeInput.value = props.fontSize;
 
     /////  bind /////
     //resize draggable
-    $label.draggable({
-        stop:function(){
-            if($label.position().top < 0){
-                $label.css("top", 0);
+    var labelX = $label.style.left;
+    var labelY = $label.style.top;
+    draggable({
+        dragElement: $action,
+        moveElement: $label,
+        onDragEnd: function(event){
+            var top = parseInt($label.style.top.replace("px", ""));
+            if(top < 0){
+                applyStyle($label, {"top": 0});
             }
+            if(labelX != $label.style.left || labelY != $label.style.top){
+                saveLabel($label);
+                labelX = $label.style.left;
+                labelY = $label.style.top;
+            }
+        }
+    });
+    resizable({
+        resizeElement: $label,
+        onResizeEnd: function(event){
             saveLabel($label);
         }
-    }).resizable({
-        stop:function(){
-            saveLabel($label);
-        }
-    }).click(function(){
-        if($label.position().top < 0)
-            $label.css("top", 0);
     });
 
-    //resize control
-    var $resizeControl = $(".ui-resizable-se", $label);
-    $resizeControl.hide();
-
-    //actions
-    $actions.hide();
-    $actionList.hide();
     //hover event bind
-    bindHoverAction();
-    bindClickAction();
-
-    //save
-    $save.click(function(){
-        saveLabel($label);
+    hoverShowToggle($label, $setting);
+    hoverShowToggle($label, $delete);
+    hover($delete, $delete, {
+        color: "red",
+        opacity: 1
     });
 
+
+    //setting
+    $setting.addEventListener("click", function(event){
+        showToggle($actionList);
+        return false;
+    });
     //delete
-    $delete.click(function(){
-        var id = $.data($label.get(0), "id");
-        if(!id) $label.remove();
-        sendRequestToPopup({
+    $delete.addEventListener("click", function(event){
+        $label.remove();
+
+        var id = getLabelId($label);
+        sendRequest({
             status:"delete",
             url:location.href,
             id:id
-        }, function(response){
-            if(response && response.isDeleted){
-                $label.remove();
-            }else{
-                alert("network error. It cannot deleted.");
-            }
         });
         return false;
     });
 
     //textarea event
-    $textForm.change(function(){
+    $textForm.addEventListener("change", function(event){
         saveLabel($label);
-    }).click(function(){
+    });
+    $textForm.addEventListener("click", function(event){
         //stop bubbling
         return false;
     });
 
-    ///// content insert /////
-    if(props.content) $textForm.val(props.content);
-
-    ///// display animation /////
-    var left = parseInt($label.css("left").replace("px", ""));
-    $label.css({
-        left:(left+10) + "px"
+    //change
+    $bgColorInput.addEventListener("change", function(event){
+        applyStyle($textForm, {
+            backgroundColor: $bgColorInput.value
+        });
+        saveLabel($label);
     });
-    $label.animate({
-        left:left + "px"
-    }, "fast");
+    $borderColorInput.addEventListener("change", function(event){
+        applyStyle($label, {
+            borderColor: $borderColorInput.value
+        });
+        applyStyle($action, {
+            backgroundColor: $borderColorInput.value
+        });
+        saveLabel($label);
+    });
+    $colorInput.addEventListener("change", function(event){
+        applyStyle($label, {
+            color: $colorInput.value
+        });
+        applyStyle($textForm, {
+            color: $colorInput.value
+        });
+        saveLabel($label);
+    });
+    $fontSizeInput.addEventListener("change", function(event){
+        var fontSize = parseInt($fontSizeInput.value);
+        applyStyle($textForm, {
+            fontSize: fontSize + "px",
+            lineHeight: (fontSize + 2) + "px"
+        });
+        saveLabel($label);
+    });
 
     //private
-    function bindHoverAction(){
-        $label.mouseover(function(){
-            $setting.show();
-            $delete.show();
-            $save.show();
-            $resizeControl.show();
-        }).mouseout(function(){
-            $setting.hide();
-            $delete.hide();
-            $save.hide();
-            $resizeControl.hide();
-        });
+    function generateLabelElement(props){
+        var labelProp = {
+            name: "div",
+            attr: {class: labelCls},
+            style: {
+                position:"absolute",
+                borderRight:"2px solid",
+                borderBottom:"2px solid",
+                borderLeft:"2px solid",
+                zIndex:9999,
+                top:props.top,
+                left:props.left,
+                width:props.width,
+                height:props.height,
+                borderColor:props.borderColor,
+                boxShadow: "rgba(113, 135, 164, 0.65098) 0px 0px 2px 1px",
+                webkitBoxShadow: "rgba(113, 135, 164, 0.65098) 0px 0px 2px 1px"
+            },
+            children: [
+                {
+                    name: "span",
+                    attr: {class: labelIdCls},
+                    style: {
+                        display: "none"
+                    }
+                },
+                {
+                    name: "div",
+                    attr: {class: actionCls},
+                    style: {
+                        position: "absolute",
+                        width: "100%",
+                        height: "16px",
+                        lineHeight: "16px",
+                        padding: "5px 0",
+                        cursor: "move",
+                        webkitUserSelect: "none",
+                        userSelect: "none",
+                        backgroundColor: props.borderColor,
+                        color: props.color
+                    },
+                    children: [
+                        generateLabelMenuProp(props),
+                        {
+                            name: "a",
+                            attr: {
+                                class: deleteActionCls,
+                                href: "javascript:void(0)"
+                            },
+                            style: {
+                                float: "right",
+                                color: "#555",
+                                background: "transparent",
+                                width: "16px",
+                                lineHeight: "16px",
+                                textAlign: "center",
+                                textDecoration: "none",
+                                fontSize: "16px",
+                                opacity: 0.7,
+                                cursor: "pointer",
+                                display: "none"
+                            },
+                            children: [
+                                "×"
+                            ]
+                        },
+                        {
+                            name: "span",
+                            attr: {class: actionMessageCls},
+                            style: {
+                                float: "right",
+                                paddingRight: "10px",
+                                fontSize: "12px",
+                                opacity: "0.8"
+                            }
+                        }
+                    ]
+                },
+                {
+                    name: "textarea",
+                    attr: {
+                        class: textFormCls,
+                        spellcheck: false
+                    },
+                    style: {
+                        webkitBoxSizing: "border-box",
+                        boxSizing: "border-box",
+                        width: "100%",
+                        height: "100%",
+                        resize: "none",
+                        overflow: "hidden",
+                        borderTop: "27px solid transparent",
+                        padding: "5px",
+                        backgroundColor:props.backgroundColor,
+                        lineHeight: (parseInt(props.fontSize) + 2) + "px",
+                        fontSize: props.fontSize + "px",
+                        color: props.color
+                    }
+                }
+            ]
+        };
+        return dom(labelProp);
     }
-    function bindClickAction(){
-        //setting
-        $setting.click(function(){
-            if($actionList.is(":hidden")){
-                $actionList.show();
-
-                var bgClr = $label.css("background-color");
-                $("span", $bgClrAct).css("background-color", bgClr);
-                var borderClr = $label.css("border-color");
-                $("span", $borderClrAct).css("background-color", borderClr);
-                var clr = $textForm.css("color");
-                $("span", $clrAct).css("background-color", clr);
-                var size = parseInt($textForm.css("font-size").replace("px", ""));
-                $fontSize.children("option:contains('" + size + "')").attr("selected", "selected");
-            }else{
-                $actionList.hide(); 
+    function generateLabelMenuProp(props){
+        return {
+            name: "div",
+            attr: {class: actionMenuCls},
+            style: {
+                float: "left",
+                marginLeft: "5px"
+            },
+            children: [
+                {
+                    name: "a",
+                    attr: {
+                        class: settingActionCls,
+                        href: "javascript:void(0)"
+                    },
+                    style: {
+                        display: "none"
+                    },
+                    children: [
+                        {
+                            name: "img",
+                            attr: {
+                                src: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAABTUlEQVQ4jZXTPy+kURQG8J9Z4++sakuqTUgUii3EhkgUsp1IVlQUEgVijO19Co1PsCQaK3QUIxIaGsVK0Ir4AAqNKN7zco0ZiSe5ybnPec7z3nvOfZs0xipGI65i/QMt6MAcSrHfTnJ5/DU07XmikBT/RSu2sISexKAHi5FrxWbUvGAW8xH3YwLFJF8Mrj/285hJDbqwh96EK2EoVinh+0LbBV+CfMS3ONYlfmIDD+jGGq5xizHc4zh3XMUBztEia9B+3DVHW3BtoTmPmgrseosRlL1HBcM13G4BTzVkU53iRngq4Eg255M43hl+1bnCuNdrnkRNNXUr43fEQ7JOl7ES8WDkprBce5R6YyziR6z0TdQd4zRuZJ0dkDXrSja2u9BNohn/0YnvuMhdO/APC+G+hNPkq6eyp7wfmh01Tzk3+fTP9BH+4DBWpZHoGWo4PfJ75dXLAAAAAElFTkSuQmCC",
+                                width: "14px",
+                                height: "14px"
+                            },
+                            style: {
+                                display: "inline",
+                                marginTop: "2px",
+                                cursor: "pointer"
+                            }
+                        }
+                    ]
+                },
+                {
+                    name: "ul",
+                    attr: {
+                        class: actionListCls
+                    },
+                    style: {
+                        display: "none",
+                        position: "absolute",
+                        top: "0",
+                        left: "-89px",
+                        listStyle: "none",
+                        width: "75px",
+                        padding: "5px",
+                        background: "#fff",
+                        border: "1px solid #999"
+                    },
+                    children: generateLabelFormProp()
+                }
+            ]
+        };
+    }
+    function generateLabelFormProp(){
+        return [
+            {
+                name: "li",
+                style: {
+                    marginBottom: "10px",
+                    fontSize: "12px",
+                    fontWeight: "bold"
+                },
+                children: [
+                    "background",
+                    {
+                        name: "input",
+                        attr: {
+                            class: bgColorId,
+                            type: "color"
+                        },
+                        style: {
+                            cursor: "pointer",
+                            marginLeft: "20px",
+                            width: "40px",
+                            height: "25px"
+                        }
+                    }
+                ]
+            },
+            {
+                name: "li",
+                style: {
+                    marginBottom: "10px",
+                    fontSize: "12px",
+                    fontWeight: "bold"
+                },
+                children: [
+                    "border",
+                    {
+                        name: "input",
+                        attr: {
+                            class: borderColorId,
+                            type: "color"
+                        },
+                        style: {
+                            cursor: "pointer",
+                            marginLeft: "20px",
+                            width: "40px",
+                            height: "25px"
+                        }
+                    }
+                ]
+            },
+            {
+                name: "li",
+                style: {
+                    marginBottom: "10px",
+                    fontSize: "12px",
+                    fontWeight: "bold"
+                },
+                children: [
+                    "font color",
+                    {
+                        name: "input",
+                        attr: {
+                            class: colorId,
+                            type: "color"
+                        },
+                        style: {
+                            cursor: "pointer",
+                            marginLeft: "20px",
+                            width: "40px",
+                            height: "25px"
+                        }
+                    }
+                ]
+            },
+            {
+                name: "li",
+                style: {
+                    fontSize: "12px",
+                    fontWeight: "bold"
+                },
+                children: [
+                    "font size",
+                    {
+                        name: "input",
+                        attr: {
+                            type: "number",
+                            class: fontSizeInputCls,
+                            max: "99",
+                            min: "8"
+                        },
+                        style: {
+                            cursor: "pointer",
+                            margin: "5px 0 5px 20px",
+                            padding: "5px",
+                            width: "40px",
+                            background: "#eee",
+                            textAlign: "center"
+                        }
+                    }
+                ]
             }
-            return false;
-        });
-        $("span", $bgClrAct).simpleColorPicker({
-            onChangeColor: function(color) {
-                $label.css("background-color", color);
-                $setting.css("background-color", color);
-                $save.css("background-color", color);
-                $(this).css("background-color", color);
-                saveLabel($label);
-            }
-        });
-        $("span", $borderClrAct).simpleColorPicker({
-            onChangeColor: function(color) {
-                $label.css("border-color", color);
-                $action.css("background-color", color);
-                var borderClr = $label.css("border-color");
-                $(this).css("background-color", borderClr);
-                saveLabel($label);
-            }
-        });
-        $("span", $clrAct).simpleColorPicker({
-            onChangeColor: function(color) {
-                $("textarea", $label).css("color", color);
-                $setting.css("color", color);
-                $save.css("color", color);
-                var clr = $textForm.css("color");
-                $(this).css("background-color", clr);
-                saveLabel($label);
-            }
-        });
-        $fontSize.change(function(){
-            var size = $(this).val();
-            $textForm.css("font-size", size + "px");
-            saveLabel($label);
-        });
+        ]
     }
 
     return $label;
@@ -298,14 +471,14 @@ function initLabel(props){
 
 // マウスカーソルの位置を保持
 var mouse_position = {};
-$(window).bind("contextmenu", function(){
+window.addEventListener("contextmenu", function(event){
     mouse_position.left = event.x + window.scrollX;
     mouse_position.top = event.y + window.scrollY;
 });
 function renderLabelFromContextMenu(props){
-    initLabel({
-        top:mouse_position.top,
-        left:mouse_position.left,
+    var $label = initLabel({
+        top:mouse_position.top + "px",
+        left:mouse_position.left + "px",
         width:"200px",
         height:"100px",
         backgroundColor:props.templateSetting.backgroundColor,
@@ -313,11 +486,15 @@ function renderLabelFromContextMenu(props){
         fontSize:props.templateSetting.fontSize,
         color:props.templateSetting.color
     });
+
+    var $textForm = $label.querySelector("." + textFormCls);
+    $textForm.focus();
+    $textForm.select();
 }
 function renderDefaultLabel(props){
-    initLabel({
-        top:(window.scrollY + ($(window).height()*(1/4))),
-        left:(window.scrollX + ($(window).width()/2 - 100)),
+    var $label = initLabel({
+        top:(window.scrollY + (window.innerHeight*(1/4))) + "px",
+        left:(window.scrollX + (window.innerWidth/2 - 100)) + "px",
         width:"200px",
         height:"100px",
         backgroundColor:props.backgroundColor,
@@ -325,57 +502,86 @@ function renderDefaultLabel(props){
         fontSize:props.fontSize,
         color:props.color
     });
+
+    var $textForm = $label.querySelector("." + textFormCls);
+    $textForm.focus();
+    $textForm.select();
 }
 
 
 ///// save /////
-function saveLabel(label){
+function saveLabel($label){
     //id
-    var id = $.data(label.get(0), "id");
-    if(!id) id =  generateId();
+    var id = getLabelId($label);
 
-    //labelにidをキャッシュ
-    $.data(label.get(0), "id", id);
-
-    //text form
-    var $textForm = $("." + textFormCls, label);
-
-    //message
-    var $message = $("." + actionMessageCls, label);
-    $message.text("saving…");
+    //dom cache
+    var $message = $label.querySelector("." + actionMessageCls);
+    var $textForm = $label.querySelector("." + textFormCls);
 
     //insert
     //update
-    sendRequestToPopup({
+    sendRequest({
         status:"save",
         url:location.href,
         title:document.title,
         id:id,
         label:{
-            top:label.css("top"),
-            left:label.css("left"),
-            width:label.outerWidth(true) + "px",
-            height:label.outerHeight(true) + "px",
-            backgroundColor:label.css("background-color"),
-            borderColor:label.css("border-color"),
-            fontSize:$textForm.css("font-size").replace("px", ""),
-            color:$textForm.css("color"),
-            content:$textForm.val()
+            top:$label.style.top,
+            left:$label.style.left,
+            width:$label.clientWidth + "px",
+            height:$label.clientHeight + "px",
+            backgroundColor:$textForm.style.backgroundColor,
+            borderColor:$label.style.borderColor,
+            fontSize:$textForm.style.fontSize.replace("px", ""),
+            color:$textForm.style.color,
+            content:$textForm.value
         }
     }, function(response){
         if(response && response.isSaved){
-            $message.text("saved");
+            $message.textContent = "saved";
             setTimeout(function(){
-                $message.text("");
+                $message.textContent = "";
             }, 2000);
         }else{
-            $message.text("network error. It cannot saved.");
+            $message.textContent = "network error. It cannot saved.";
         }
     });
+}
+function bindKeyControl(data){
+    var cmds = data.cmds;
+    var template = data.template;
+
+    var create = cmds.create;
+    if(create && (create.meta.length > 0 || create.key)){
+        keycontrol(window, "keydown", create.meta, create.key, function(event){
+            renderDefaultLabel(template);
+        });
+    }
+    var save = cmds.save;
+    if(save && (save.meta.length > 0 || save.key)){
+        keycontrol(window, "keydown", save.meta, save.key, function(event){
+            saveAllLabels();
+        });
+    }
 }
 function generateId(){
     return new Date().getTime() + "";
 }
-function deleteAllUrlLabels(){
-    $(".wl-label").remove();
+function getLabelId($label){
+    return $label.querySelector("." + labelIdCls).textContent;
 }
+function deleteAllUrlLabels(){
+    var nodes = document.querySelectorAll("." + labelCls);
+    var nLen = nodes.length;
+    for(var i=0; i<nLen; i++){
+        nodes[i].remove();
+    }
+}
+function saveAllLabels(){
+    var nodes = document.querySelectorAll("." + labelCls);
+    var nLen = nodes.length;
+    for(var i=0; i<nLen; i++){
+        saveLabel(nodes[i]);
+    }
+}
+

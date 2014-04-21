@@ -1,9 +1,9 @@
 {
   "name": "WebLabel",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "manifest_version": 2,
 
-  "description": "",
+  "description": "It is a tool that paste a sticky note on the Web page.",
    "icons": {
     "16": "img/icon.png",
     "48": "img/icon.png",
@@ -13,8 +13,10 @@
   "browser_action": {
     "default_icon": "img/icon.png", 
     "default_title": "Web Label",
-    "default_popup": "browser/popup.html"
+    "default_popup": "html/popup.html"
   },
+
+  "options_page": "html/option.html",
 
   "background": {
       "scripts": [
@@ -27,15 +29,9 @@
         "https://*/*",
         "http://*/*"
       ],
-      "css": [
-        "css/jquery-ui-1.8.21.custom.css",
-        "css/jquery.simple-color-picker.css",
-        "css/content.css"
-      ],
       "js": [
-        "js/jquery-1.7.2.min.js",
-        "js/jquery-ui-1.8.21.custom.min.js",
-        "js/jquery.simple-color-picker.js",
+        "js/content_base.js",
+        "js/keycontrol.js",
         "js/content.js"
       ]
     }
@@ -43,10 +39,7 @@
   "content_security_policy": "script-src 'self'; object-src 'self'",
 
   "permissions": [
-      "https://*/*",
-      "http://*/*",
       "contextMenus",
-      "tabs",
-      "unlimitedStorage"
+      "tabs"
   ]
 }

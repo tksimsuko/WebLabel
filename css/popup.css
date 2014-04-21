@@ -1,107 +1,21 @@
-body,h1,h2,h3,h4,h5,h6,div,ul,li,p,label,header,footer{
-	margin:0;
-	padding:0;
-}
 body{
-	font-size:12px;
-	height:600px;
-	width:300px;
+	width: 400px;
+	min-height: 400px;
 }
 
-/* action */
-.action{
-	-webkit-box-sizing:border-box;
-	box-sizing:border-box;
-	position:fixed;
-	width:100%;
-	padding:3px;
-	z-index:9999;
-	overflow-x:hidden;
-}
-.action,
-.action .btn{
-	background:gold;
-}
-.action .add-label{
-	float: left;
-}
-.btn-toolbar{
-	margin:0;
-}
-/*setting*/
-.settingForm{
-	width:100%;
-	background:rgb(255, 230, 95);
-	position:fixed;
-	z-index:9999;
-	right:0;
-
-	-webkit-border-bottom-right-radius:5px;
-	border-bottom-right-radius: 5px;
-	-webkit-border-bottom-left-radius:5px;
-	border-bottom-left-radius: 5px;
-
-	border-right:1px solid #CCC;
-	border-bottom:1px solid #CCC;
-	border-left:1px solid #CCC;
-}
-.formWrap{
-	margin:10px 10px 0 10px;
-}
-.settingForm .onOff{
-	overflow-x:hidden;
-	width:94px;
-	margin:10px 20px;
-}
-.settingForm .onOffImg{
-	background-image: url("../img/switch.png");
-	background-repeat: no-repeat;
-	width:147px;
-	height:27px;
-	cursor:pointer;
-
-	-webkit-transition: margin-left 0.2s;
-	transition: margin-left 0.2s;
-}
-.settingForm p{
-	float:left;
-}
-.settingForm .templateLabel{
-	margin:3px 0 3px 20px;
-}
-.settingForm select{
-	margin-left:5px;
-}
-.settingForm .colorpicker{
-	display:block;
-	margin:3px 5px;
-	width:15px;
-	height:15px;
-	border:1px solid black;
-	cursor:pointer;
-}
-.settingForm .closeForm{
-	width:100%;
-	line-height:20px;
-	text-align: center;
-	background:gold;
-	cursor:pointer;
-}
-.wl-color-picker{
-	z-index:9999;
-}
 /*search form*/
 .searchForm{
 	-webkit-box-sizing:border-box;
 	box-sizing:border-box;
 	padding:10px 5px;
+	margin-top: 37px;
 }
 .searchInputWrap{
 	position:relative;
 	float:left;
 }
-.searchForm #searchLabelInput{
-	min-width:260px;
+.searchForm input {
+	width: 350px;
 }
 .searchForm .searchTextRemove{
 	position:absolute;
@@ -114,48 +28,59 @@ body{
 .label-list{
 	margin:0;
 	padding:0;
+	border-bottom: 1px solid #ccc;
 }
 .label-list .label-term{
-	position:relative;
-	padding:10px;
-	border-top:1px #CCC solid;
+	position: relative;
+	padding: 5px 10px;
+	border-top: 1px #ccc solid;
+	overflow-x: hidden;
 }
 .label-list .label-term:hover{
-	background:#EEE;
+	background:#eee;
 }
 .label-list .label-term .label-count{
 	position:absolute;
-	top:10px;
-	right:10px;
+	top: 10px;
+	right: 10px;
 }
 .label-list .label-term .label-term-content{
 	padding-right:40px;
 }
-.label-list .label-term h5{
+.label-list .label-term .label-title{
+	padding: 3px;
 	word-wrap:break-word;
 	color:#353535;
+	cursor: pointer;
 }
-.label-list .label-term p{
-	margin:0;
-	padding:0;
-	word-wrap:break-word;
-	font-size:12px;
-	color:rgba(0, 0, 0, 0.5);
+.label-list .label-term .labels-url{
+	padding: 3px 0;
+	color: #777;
+	line-height: 14px;
+	opacity: 0.8;
+	float: left;
 }
-.label-list .label-term  .labels-action{
-	clear:both;
-}
-.label-list .label-term .label-content-open{
-	margin-right: 10px;
+.label-list .label-term .detail-btn{
+	padding-right: 10px;
+	font-weight: bold;
+	color: #555;
+	cursor: pointer
 }
 .label-list .label-term .labels-delete-btn{
-	float:right;
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+}
+.label-list .urlLabels{
+	list-style: decimal;
+	margin-left: 20px;
+	margin-bottom: 20px;
 }
 .label-list .label-content{
 	margin:5px;
 	padding:5px;
 }
-.label-list .label-content p{
+.label-list .label-content .label-content-text{
 	white-space: pre-wrap;
 	word-wrap:break-word;
 }
@@ -164,12 +89,4 @@ body{
 	text-align:center;
 	opacity:0.5;
 	line-height:400px;
-}
-
-/* utility */
-.fix:after{
-	content:"";
-	visibility: hidden;
-	display:block;
-	clear:both;
 }
