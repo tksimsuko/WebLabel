@@ -8,7 +8,7 @@ chrome.extension.onMessage.addListener(
                     renderDefaultLabel(request.templateSetting);
                     break;
                 case "createFromContextMenu" : 
-                    renderLabelFromContextMenu(request);
+                    renderLabelFromContextMenu(request.templateSetting);
                     break;
                 case "deleteUrlLabels" :
                     deleteAllUrlLabels();
@@ -479,14 +479,15 @@ function renderLabelFromContextMenu(props){
     var $label = initLabel({
         top:mouse_position.top + "px",
         left:mouse_position.left + "px",
-        width:"200px",
-        height:"100px",
-        backgroundColor:props.templateSetting.backgroundColor,
-        borderColor:props.templateSetting.borderColor,
-        fontSize:props.templateSetting.fontSize,
-        color:props.templateSetting.color
+        width:props.width,
+        height:props.height,
+        backgroundColor:props.backgroundColor,
+        borderColor:props.borderColor,
+        fontSize:props.fontSize,
+        color:props.color
     });
 
+    //textarea focus
     var $textForm = $label.querySelector("." + textFormCls);
     $textForm.focus();
     $textForm.select();
@@ -495,14 +496,15 @@ function renderDefaultLabel(props){
     var $label = initLabel({
         top:(window.scrollY + (window.innerHeight*(1/4))) + "px",
         left:(window.scrollX + (window.innerWidth/2 - 100)) + "px",
-        width:"200px",
-        height:"100px",
+        width:props.width,
+        height:props.height,
         backgroundColor:props.backgroundColor,
         borderColor:props.borderColor,
         fontSize:props.fontSize,
         color:props.color
     });
 
+    //textarea focus
     var $textForm = $label.querySelector("." + textFormCls);
     $textForm.focus();
     $textForm.select();
@@ -547,6 +549,7 @@ function saveLabel($label){
         }
     });
 }
+
 function bindKeyControl(data){
     var cmds = data.cmds;
     var template = data.template;
