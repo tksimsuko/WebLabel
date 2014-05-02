@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Web Label Setting</title>
+	<link rel="stylesheet" href="../css/bootstrap.min.css" />
+	<link rel="stylesheet" href="../css/base.css" />
+	<link rel="stylesheet" type="text/css" href="../css/option.css">
+</head>
+<body>
+	<div id="container">
+		<div class="btn-toolbar action fix"></div>
+		<div id="setting">
+			<div  id="onOff" class="fix">
+				<h3>Display labels</h3>
+				<div class="form">
+					<label id="on">
+						on
+						<input type="radio" name="onOff" value="on"/>
+					</label>
+					<label id="off">
+						off
+						<input type="radio" name="onOff" value="off"/>
+					</label>
+				</div>
+			</div>
+			<div id="template">
+				<h3>Default Label settings</h3>
+				<div class="form">
+					<p>
+						<span class="labelTitle">background</span>
+						<input type="color" id="backgroundColor"/>
+					</p>
+					<p>
+						<span class="labelTitle">border</span>
+						<input type="color" id="borderColor"/>
+					</p>
+					<p>
+						<span class="labelTitle">font color</span>
+						<input type="color" id="color"/>
+					</p>
+					<p>
+						<span class="labelTitle">font size</span>
+						<input type="number" id="fontSize" class="input-mini" min="8" max="99"/>px
+					</p>
+					<p>
+						<span class="labelTitle">width</span>
+						<input type="number" id="width"/>px
+					</p>
+					<p>
+						<span class="labelTitle">height</span>
+						<input type="number" id="height"/>px
+					</p>
+					<div class="previewLabel">font</div>
+				</div>
+			</div>
+			<div id="command">
+				<h3>Command</h3>
+				<div class="form">
+					<hr/>
+					<p>
+						<span class="labelTitle">create label</span><input type="text" id="createCommand" placeholder="none"/><span class="deleteCmd deleteCreateCmd">×</span>
+					</p>
+					<hr/>
+					<p>
+						<span class="labelTitle">save</span><input type="text" id="saveCommand" placeholder="none"/><span class="deleteCmd deleteSaveCmd">×</span>
+					</p>
+					<hr/>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="../js/base.js"></script>
+	<script src="../js/option.js"></script>
+</body>
+</html>

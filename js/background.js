@@ -44,13 +44,13 @@ chrome.extension.onMessage.addListener(
 
 		switch(request.status){
 			case "read" :
-				var onOff = window.localStorage.getItem(ON_OFF_KEY);
+				var onOff = storage.getItem(ON_OFF_KEY);
 				if(onOff === "off"){
 					sendResponse();
 					return;
 				}
 
-				var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
+				var labelStore = JSON.parse(storage.getItem(LABEL_STORE_KEY));
 				if(!labelStore) return; 
 				var urlLabels = labelStore[request.url]
 				if(urlLabels) sendResponse(urlLabels);
@@ -163,14 +163,14 @@ chrome.contextMenus.create({
 
 // create
 function create(callback){
-	var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
+	var templateSetting = JSON.parse(storage.getItem(TEMPLATE_SETTING_KEY));
 	requestPopupToPage({
 		status:"create",
 		templateSetting:templateSetting
 	}, callback);
 }
 function createFromContextMenu(){
-	var templateSetting = JSON.parse(window.localStorage.getItem(TEMPLATE_SETTING_KEY));
+	var templateSetting = JSON.parse(storage.getItem(TEMPLATE_SETTING_KEY));
 	requestPopupToPage({
 		status:"createFromContextMenu",
 		templateSetting:templateSetting
@@ -184,7 +184,7 @@ function save(request){
 	var title = request.title;
 	var id = request.id;
 	var label = request.label;
-	var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
+	var labelStore = JSON.parse(storage.getItem(LABEL_STORE_KEY));
 
 	//new url array insert
 	if(!labelStore){
@@ -199,7 +199,7 @@ function save(request){
 		lbls[id] = label;
 		urlLabels.labels = lbls;
 		labelStore[url] = urlLabels;
-		window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
+		storage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 		return;
 	}
 
@@ -221,20 +221,20 @@ function save(request){
 		urlLabels.labels = lbls;
 		labelStore[url] = urlLabels;
 	}
-	window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
+	storage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 }
 function deleteUrlLabel(url){
-	var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
+	var labelStore = JSON.parse(storage.getItem(LABEL_STORE_KEY));
 	if(labelStore[url]){
 		delete labelStore[url];
-		window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
+		storage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 	}
 	publishTo(url, {
 		status:"delete"
 	}, function(response){});
 }
 function deleteLabel(url, id){
-	var labelStore = JSON.parse(window.localStorage.getItem(LABEL_STORE_KEY));
+	var labelStore = JSON.parse(storage.getItem(LABEL_STORE_KEY));
 	var urlLabels = labelStore[url];
 
 	//update dataStore
@@ -246,13 +246,13 @@ function deleteLabel(url, id){
 				if(isEmptyObject(labels)){
 					delete labelStore[url];
 					if(isEmptyObject(labelStore)){
-						window.localStorage.removeItem(LABEL_STORE_KEY);
+						storage.removeItem(LABEL_STORE_KEY);
 					}else{
-						window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
+						storage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 					}
 				}else{
 					labelStore[url].labels = labels;
-					window.localStorage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
+					storage.setItem(LABEL_STORE_KEY, JSON.stringify(labelStore));
 				}
 			}
 		}
