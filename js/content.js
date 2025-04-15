@@ -1,6 +1,6 @@
 ///// message /////
 //ブラウザアクションからのりクエストを受け取る
-chrome.extension.onMessage.addListener(
+chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         if(request){
             switch(request.status){
@@ -22,7 +22,7 @@ chrome.extension.onMessage.addListener(
 
 //バックグラウンドへりクエストを送る
 function sendRequest(data, callback){
-    chrome.extension.sendMessage(data, function(response) {
+    chrome.runtime.sendMessage(data, function(response) {
         if(response){
             if(callback) callback(response);
         }
